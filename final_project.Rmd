@@ -1,0 +1,50 @@
+---
+title: "Final Project (Working Title)"
+author: "Charlotte Drury U6603688"
+date: "04/10/2023"
+output:  
+    html_document:
+        toc: true
+        toc_depth: 4
+        theme: cosmo
+        number_sections: false
+        toc_float: true
+        highlight: pygments
+        fig_width: 8
+        fig_height: 4
+---
+
+# Word/figure count
+
+
+# Location on GitHub
+
+https://github.com/DruryCF/DS4B-final-project
+
+# Data Description
+
+
+
+# Questions/Aims
+
+
+
+# Raw data
+
+
+
+# Data wrangling
+
+
+
+# Sanity checks
+
+
+
+# Addressing the questions/aims
+
+
+
+# References
+
+

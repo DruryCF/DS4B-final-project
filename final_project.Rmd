@@ -16,6 +16,9 @@ output:
 
 # Word/figure count
 
+words: 471
+
+figures: 0
 
 # Location on GitHub
 
@@ -27,7 +30,17 @@ The AvoNet database contains functional trait data for 90,020 individual birds r
 
 # Questions/Aims
 
+Aim: to build an R-package to interface with AvoNet
 
+* Build functions to:
+    + install and load data
+    + tidy data
+    + clean data (As AvoNet is a single release, it can be pre-cleaned)
+    + facilitate Exploratory Data Analysis (EDA)
+
+Justification: 
+
+AvoNet is stored across 9 related excel spreadsheets making it difficult to explore and interact with. Other datasets stored similarly (e.g. AusTraits, Atlas of Living Australia) have dedicated R-packages to streamline their use (Falster et al., 2021; Westgate et al., 2023). An R-package that interfaces with AvoNet would facilitate EDA and aid in addressing specific research questions.
 
 # Raw data
 
@@ -49,6 +62,7 @@ The AvoNet database contains functional trait data for 90,020 individual birds r
 
 Falster, D., Gallagher, R., Wenk, E.H. et al. (2021). AusTraits, a curated plant trait database for the Australian flora. _Sci Data_ 8, 254. https://doi.org/10.1038/s41597-021-01006-6
 
+Tobias, J.A., Sheard, C., Pigot, A.L. et al. (2022). AVONET: morphological, ecological and geographical data for all birds. _Ecology Letters_, 25(3), 581–597. https://doi.org/10.1111/ele.13898
 
 Westgate, M., Kellie, D., Stevenson, M., Newman, P. (2023). _galah: Biodiversity Data from the Living Atlas Community_. R package version 1.5.3, https://CRAN.R-project.org/package=galah
 

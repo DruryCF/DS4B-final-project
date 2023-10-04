@@ -47,3 +47,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Raw Data Files
+raw_data/AVONET Supplementary dataset 1.xlsx

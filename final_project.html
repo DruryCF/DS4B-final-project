@@ -1477,6 +1477,8 @@ border-radius: 0px;
 
 <div id="wordfigure-count" class="section level1">
 <h1>Word/figure count</h1>
+<p>words: 471</p>
+<p>figures: 0</p>
 </div>
 <div id="location-on-github" class="section level1">
 <h1>Location on GitHub</h1>
@@ -1484,9 +1486,35 @@ border-radius: 0px;
 </div>
 <div id="data-description" class="section level1">
 <h1>Data Description</h1>
+<p>The AvoNet database contains functional trait data for 90,020
+individual birds representing 11,009 extant species sampled from 181
+countries (Tobias et al., 2022). It includes 11 continuous morphological
+traits (such as beak and wing dimensions; and tail, tarsus, and body
+size), 6 ecological variables, as well as range size, and geographic
+location. The database also includes species averages according to three
+different taxonomy classifications to enable integration with other
+databases.</p>
 </div>
 <div id="questionsaims" class="section level1">
 <h1>Questions/Aims</h1>
+<p>Aim: to build an R-package to interface with AvoNet</p>
+<ul>
+<li>Build functions to:
+<ul>
+<li>install and load data</li>
+<li>tidy data</li>
+<li>clean data (As AvoNet is a single release, it can be
+pre-cleaned)</li>
+<li>facilitate Exploratory Data Analysis (EDA)</li>
+</ul></li>
+</ul>
+<p>Justification:</p>
+<p>AvoNet is stored across 9 related excel spreadsheets making it
+difficult to explore and interact with. Other datasets stored similarly
+(e.g. AusTraits, Atlas of Living Australia) have dedicated R-packages to
+streamline their use (Falster et al., 2021; Westgate et al., 2023). An
+R-package that interfaces with AvoNet would facilitate EDA and aid in
+addressing specific research questions.</p>
 </div>
 <div id="raw-data" class="section level1">
 <h1>Raw data</h1>
@@ -1502,6 +1530,15 @@ border-radius: 0px;
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
+<p>Falster, D., Gallagher, R., Wenk, E.H. et al. (2021). AusTraits, a
+curated plant trait database for the Australian flora. <em>Sci Data</em>
+8, 254. <a href="https://doi.org/10.1038/s41597-021-01006-6" class="uri">https://doi.org/10.1038/s41597-021-01006-6</a></p>
+<p>Tobias, J.A., Sheard, C., Pigot, A.L. et al. (2022). AVONET:
+morphological, ecological and geographical data for all birds.
+<em>Ecology Letters</em>, 25(3), 581–597. <a href="https://doi.org/10.1111/ele.13898" class="uri">https://doi.org/10.1111/ele.13898</a></p>
+<p>Westgate, M., Kellie, D., Stevenson, M., Newman, P. (2023).
+<em>galah: Biodiversity Data from the Living Atlas Community</em>. R
+package version 1.5.3, <a href="https://CRAN.R-project.org/package=galah" class="uri">https://CRAN.R-project.org/package=galah</a></p>
 </div>
 
 

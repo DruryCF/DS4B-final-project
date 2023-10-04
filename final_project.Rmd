@@ -23,7 +23,7 @@ https://github.com/DruryCF/DS4B-final-project
 
 # Data Description
 
-
+The AvoNet database contains functional trait data for 90,020 individual birds representing 11,009 extant species sampled from 181 countries (Tobias et al., 2022). It includes 11 continuous morphological traits (such as beak and wing dimensions; and tail, tarsus, and body size), 6 ecological variables, as well as range size, and geographic location. The database also includes species averages according to three different taxonomy classifications to enable integration with other databases.
 
 # Questions/Aims
 
@@ -47,4 +47,8 @@ https://github.com/DruryCF/DS4B-final-project
 
 # References
 
+Falster, D., Gallagher, R., Wenk, E.H. et al. (2021). AusTraits, a curated plant trait database for the Australian flora. _Sci Data_ 8, 254. https://doi.org/10.1038/s41597-021-01006-6
+
+
+Westgate, M., Kellie, D., Stevenson, M., Newman, P. (2023). _galah: Biodiversity Data from the Living Atlas Community_. R package version 1.5.3, https://CRAN.R-project.org/package=galah
 

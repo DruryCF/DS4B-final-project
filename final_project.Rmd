@@ -40,7 +40,7 @@ Aim: to build an R-package to interface with AvoNet
 
 Justification: 
 
-AvoNet is stored across 9 related excel spreadsheets making it difficult to explore and interact with. Other datasets stored similarly (e.g. AusTraits, Atlas of Living Australia) have dedicated R-packages to streamline their use (Falster et al., 2021; Westgate et al., 2023). Some of AvoNet is incorporated in the 'traitdata' package, however this (at the time of writing) is only trait data on a single member per species according to the BirdLife taxonomy classification (RS-eco, 2022). An R-package that interfaces with the entirety of AvoNet would facilitate EDA and aid in addressing specific research questions.
+AvoNet is stored across 11 related excel spreadsheets making it difficult to explore and interact with. Other datasets stored similarly (e.g. AusTraits, Atlas of Living Australia) have dedicated R-packages to streamline their use (Falster et al., 2021; Westgate et al., 2023). Some of AvoNet is incorporated in the 'traitdata' package, however this (at the time of writing) is only trait data on a single member per species according to the BirdLife taxonomy classification (RS-eco, 2022). An R-package that interfaces with the entirety of AvoNet would facilitate EDA and aid in addressing specific research questions.
 
 # Raw data
 

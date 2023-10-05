@@ -16,7 +16,7 @@ output:
 
 # Word/figure count
 
-words: 471
+words: 550
 
 figures: 0
 
@@ -40,7 +40,7 @@ Aim: to build an R-package to interface with AvoNet
 
 Justification: 
 
-AvoNet is stored across 9 related excel spreadsheets making it difficult to explore and interact with. Other datasets stored similarly (e.g. AusTraits, Atlas of Living Australia) have dedicated R-packages to streamline their use (Falster et al., 2021; Westgate et al., 2023). An R-package that interfaces with AvoNet would facilitate EDA and aid in addressing specific research questions.
+AvoNet is stored across 9 related excel spreadsheets making it difficult to explore and interact with. Other datasets stored similarly (e.g. AusTraits, Atlas of Living Australia) have dedicated R-packages to streamline their use (Falster et al., 2021; Westgate et al., 2023). Some of AvoNet is incorporated in the 'traitdata' package, however this (at the time of writing) is only trait data on a single member per species according to the BirdLife taxonomy classification (RS-eco, 2022). An R-package that interfaces with the entirety of AvoNet would facilitate EDA and aid in addressing specific research questions.
 
 # Raw data
 
@@ -61,6 +61,8 @@ AvoNet is stored across 9 related excel spreadsheets making it difficult to expl
 # References
 
 Falster, D., Gallagher, R., Wenk, E.H. et al. (2021). AusTraits, a curated plant trait database for the Australian flora. _Sci Data_ 8, 254. https://doi.org/10.1038/s41597-021-01006-6
+
+RS-eco (2022). _traitdata: Easy access to various ecological trait data_. R package version 0.0.1, https://github.com/RS-eco/traitdata
 
 Tobias, J.A., Sheard, C., Pigot, A.L. et al. (2022). AVONET: morphological, ecological and geographical data for all birds. _Ecology Letters_, 25(3), 581–597. https://doi.org/10.1111/ele.13898
 

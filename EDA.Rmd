@@ -5,3 +5,26 @@ date: "2023-10-05"
 ---
 
 The purpose of this Rmarkdown is to track function development and demonstrate their use
+
+# Load Libraries
+
+```{r}
+library(tidyverse, quietly = TRUE)
+library(readxl)
+```
+
+# Download data function
+
+```{r}
+install_avonet <- function(){
+  
+  cat("Downloading AvoNet...\n")
+  
+  download.file(url = "https://figshare.com/ndownloader/files/34480856?private_link=b990722d72a26b5bfead", destfile = "raw_data/AVONET Supplementary dataset 1.xlsx", mode = "wb")
+
+  }
+```
+
+```{r}
+install_avonet()
+```

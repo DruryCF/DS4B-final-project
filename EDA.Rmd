@@ -1,0 +1,7 @@
+---
+title: "EDA.Rmd"
+output: html_document
+date: "2023-10-05"
+---
+
+The purpose of this Rmarkdown is to track function development and demonstrate their use

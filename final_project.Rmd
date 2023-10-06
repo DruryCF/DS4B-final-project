@@ -1,5 +1,6 @@
 ---
-title: "Final Project (Working Title)"
+title: "Humdrum"
+subtitle: "A package designed to remove the humdrum from Exploratory Data Analysis using the AvoNet dataset"
 author: "Charlotte Drury U6603688"
 date: "04/10/2023"
 output:  

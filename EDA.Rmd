@@ -16,17 +16,17 @@ library(readxl)
 # Download data function
 
 ```{r}
-install_avonet <- function(){
+install_avonet <- function(filename){
   
   cat("Downloading AvoNet...\n")
   
-  download.file(url = "https://figshare.com/ndownloader/files/34480856?private_link=b990722d72a26b5bfead", destfile = "raw_data/AVONET Supplementary dataset 1.xlsx", mode = "wb")
+  download.file(url = "https://figshare.com/ndownloader/files/34480856?private_link=b990722d72a26b5bfead", destfile = filename, mode = "wb")
 
   }
 ```
 
 ```{r}
-install_avonet()
+install_avonet(filename = "raw_data/AVONET Supplementary dataset 1.xlsx")
 ```
 
 # Load AvoNet
@@ -76,15 +76,15 @@ load_avonet <- function() {
   avonet$metadata <- avonet$metadata %>% 
     rename(variable.types = `variable types`)
   
-  # Write AvoNet to global environment
+  # Return avonet
   
-  avonet <<- avonet
+  return(avonet)
 
 }
 ```
 
 ```{r}
-load_avonet()
+avonet <- load_avonet()
 ```
 
 

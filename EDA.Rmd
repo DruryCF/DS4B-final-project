@@ -41,7 +41,7 @@ load_avonet <- function() {
   names <- c("metadata", "birdlife", "ebird", "birdtree", 5, "raw_data", "mass_sources", "data_sources", "measurers", 10, 11)
     
   for (i in 1:11) {
-  x <- setNames(list(suppressWarnings(read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = i, ))), names[i])
+  x <- setNames(list(suppressWarnings(read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = i, na = "NA"))), names[i])
   avonet <- append(avonet, x)
   }
   
@@ -237,3 +237,4 @@ extract_avonet <- function (taxon_system = "birdlife",
 summary_avonet <- extract_avonet(taxon_system = "birdlife", taxon_level = "family", traits = c(".length"))
 summary_avonet
 ```
+

@@ -69,3 +69,12 @@ avonet$metadata <- avonet$metadata %>%
   rename(variable.types = `variable types`)
 ```
 
+# Sanity check raw_data
+
+```{r}
+avonet$raw_data
+```
+
+```{r}
+skim(avonet$raw_data)
+```

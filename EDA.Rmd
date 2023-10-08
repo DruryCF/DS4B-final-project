@@ -89,30 +89,48 @@ avonet <- load_avonet()
 
 # extract set functional traits and return summary statistics for set taxon level by set taxon system
 
-This function is in development. Currently, the function is able to retrieve the set taxon system through the 'taxon_system' argument and can dynamically group observations by species, family, or order
+This function is in development. Currently, the function is able to retrieve the set taxon system through the 'taxon_system' argument and add this data to the raw dataset of AvoNet. It can also dynamically group observations by species, genus, family, or order.
 
 ```{r}
-extract_avonet <- function (data,
-                            taxon_system = "birdlife",
+extract_avonet <- function (taxon_system = "birdlife",
                             taxon_level = "species",
                             traits = NULL) {
   
   t_c <- taxon_system
   t_l <- taxon_level
-  data <- data$raw_data
+  avonet <- load_avonet()
+  data <- avonet$raw_data
   
   # Extract taxon systems
   
   taxon_systems <- list()
   
   birdlife <- avonet$birdlife %>% 
-    select(species1, family1, order1)
+    select(order1, family1, species1) %>% 
+    rowwise() %>% 
+    mutate(genus = strsplit(species1, " ")[[1]][1], # Code written by ChatGPT to extract genus names from species
+           .before = species1) %>%
+    rename(species = species1,
+           order = order1,
+           family = family1)
   
-  ebird <- avonet$ebird %>% 
-    select(species2, family2, order2)
+    ebird <- avonet$ebird %>% 
+    select(order2, family2, species2) %>% 
+    rowwise() %>% 
+    mutate(genus = strsplit(species2, " ")[[1]][1], # Code written by ChatGPT to extract genus names from species
+           .before = species2) %>%
+    rename(species = species2,
+           order = order2,
+           family = family2)
   
   birdtree <- avonet$birdtree %>% 
-    select(species3, family3, order3)
+    select(order3, family3, species3) %>% 
+    rowwise() %>% 
+    mutate(genus = strsplit(species3, " ")[[1]][1], # Code written by ChatGPT to extract genus names from species
+           .before = species3) %>%
+    rename(species = species3,
+           order = order3,
+           family = family3)
   
   taxon_systems$birdlife <- birdlife
   taxon_systems$ebird <- ebird
@@ -124,21 +142,21 @@ extract_avonet <- function (data,
     
     t_system <- taxon_systems$birdlife
     
-    cat("taxon system:", tolower(t_c))
+    cat("\ntaxon system:", tolower(t_c))
     
   } else {
     
       if (tolower(t_c) == "ebird") {
       
-        t_system <<- taxon_systems$ebird
-        cat("taxon system:", tolower(t_c))
+        t_system <- taxon_systems$ebird
+        cat("\ntaxon system:", tolower(t_c))
       
       } else {
     
           if (tolower(t_c) == "birdtree") {
         
             t_system <- taxon_systems$birdtree
-            cat("taxon system:", tolower(t_c))
+            cat("\ntaxon system:", tolower(t_c))
       
           } else {
         
@@ -148,74 +166,71 @@ extract_avonet <- function (data,
         }
     }
   
+  # add taxon system to raw_data -> method adapted from StackOverflow (https://stackoverflow.com/questions/50615116/renaming-character-variables-in-a-column-in-data-frame-r)
+
+  taxon_new <- t_system[1:3]
+  
+  taxon_species <- t_system[4]
+  
+  taxon_names_lookup_o <- setNames(c(taxon_new$order), c(taxon_species$species)) 
+  taxon_names_lookup_f <- setNames(c(taxon_new$family), c(taxon_species$species))
+  taxon_names_lookup_g <- setNames(c(taxon_new$genus), c(taxon_species$species))
+  
+  ## retrieve taxon specific species variable name in raw_data
+  
+  if (tolower(t_c) == "birdlife") {
+    i <- 1
+  }
+  
+  if (tolower(t_c) == "ebird") {
+    i <- 2
+  }
+  
+  if (tolower(t_c) == "birdtree") {
+    i <- 3
+  }
+    
+  species_variable_name <- paste("species", i, "_", t_c, sep = "")
+  
+  ## Reassign species to new taxon level
+  
+  data <- data %>% 
+    rename(species = all_of(species_variable_name))
+  
+  data$order <- as.character(taxon_names_lookup_o[data$species])
+  data$family <- as.character(taxon_names_lookup_f[data$species])
+  data$genus <- as.character(taxon_names_lookup_g[data$species])
+  
+  ## Rearrange column order
+  
+  data <- data %>% 
+    select(order, family, genus, species, everything())
+  
+  ## Drop unneeded taxon variables
+  
+  data <- data %>% 
+    select(!contains(c("ebird", "birdlife", "birdtree")))
+  
   # group data by taxon level
   
-  taxon_names <- names(t_system)
+  summary <- data %>% 
+    group_by(!!sym(t_l))
   
-  if (tolower(t_l) == "species") {
-    
-    grouping_variable_name <- paste(taxon_names[1], "_", t_c, sep = "")
-    
-    summary <- data %>% 
-      group_by(!!sym(grouping_variable_name)) # The !!sym() code to retrieve the variable name stored in an object was written by ChatGPT
-    
-  } else {
-    
-      if (tolower(t_l) == "family" | tolower(t_l) == "order") {
-        
-        if (tolower(t_l) == "family") {
-          
-          i <- 2
-          
-        } else {
-          
-            if (tolower(t_l) == "order") {
-              
-              i <- 3
-              
-            }
-          
-          }
-        
-        grouping_variable_name <- paste(taxon_names[i], "_", t_c, sep = "")
-        species_variable_name <- paste(taxon_names[1], "_", t_c, sep = "")
-        
-        # Lookup taxon level
-        
-        taxon_new <- t_system[taxon_names[i]] %>% 
-          rename(taxon = taxon_names[i])
-      
-        taxon_species <- t_system[taxon_names[1]] %>% 
-          rename(taxon = taxon_names[1])
-      
-        taxon_names_lookup <- setNames(c(taxon_new$taxon), c(taxon_species$taxon))
-        
-        # Reassign species to new taxon level
-        
-        data <- data %>% 
-          rename(species = species_variable_name)
-        
-        data$species <- as.character(taxon_names_lookup[data$species])
-        
-        data <- data %>% 
-          rename(family_order = species) # need to dynamically rename new taxon level
-      
-        summary <- data %>% 
-          group_by(family_order)
-        
-      }
-    
-    }
+  # Return summary
+  
   return(summary)
+
 }
 ```
 
 ```{r}
-summary_avonet <- extract_avonet(data = avonet, taxon_system = "birdlife", taxon_level = "family")
-summary_avonet2 <- extract_avonet(data = avonet, taxon_system = "ebird", taxon_level = "species")
-summary_avonet3 <- extract_avonet(data = avonet, taxon_system = "birdtree", taxon_level = "order")
+summary_avonet <- extract_avonet(taxon_system = "birdlife", taxon_level = "family")
+summary_avonet2 <- extract_avonet(taxon_system = "ebird", taxon_level = "genus")
+summary_avonet3 <- extract_avonet(taxon_system = "birdtree", taxon_level = "order")
+summary_avonet4 <- extract_avonet(taxon_system = "birdlife", taxon_level = "species")
 
 summary_avonet
 summary_avonet2
 summary_avonet3
+summary_avonet4
 ```

@@ -3,6 +3,7 @@ title: "data_cleaning.Rmd"
 output: html_document
 date: "2023-10-03"
 ---
+
 # Set working directory as project directory
 
 ```{r setup}
@@ -96,6 +97,21 @@ avonet$raw_data <- avonet$raw_data %>%
 
 avonet$raw_data
 avonet$gap_species
+```
+
+```{r}
+skim(avonet$raw_data)
+```
+
+## Remove empty variables from $raw_data
+
+From skim(), can see that 'locality' and 'country' are both empty variables. They can therefore be removed from $raw_data
+
+```{r}
+avonet$raw_data <- avonet$raw_data %>% 
+  select(!c(locality, country))
+
+avonet$raw_data
 ```
 
 ```{r}

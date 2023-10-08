@@ -90,7 +90,7 @@ avonet
 
 # extract set functional traits and return summary statistics for set taxon level by set taxon system
 
-This function is in development. Currently, the function is able to retrieve the set taxon system through the 'taxon_system' argument and add this data to the raw dataset of AvoNet. It can also dynamically group observations by species, genus, family, or order.
+This function is in development. Currently, the function is able to retrieve the set taxon system through the 'taxon_system' argument and add this data to the raw dataset of AvoNet. It can also dynamically group observations by species, genus, family, or order. Through the 'traits' argument, users can specify which traits they would like to extract, if unspecified all variables will remain available.
 
 ```{r}
 extract_avonet <- function (taxon_system = "birdlife",
@@ -212,6 +212,15 @@ extract_avonet <- function (taxon_system = "birdlife",
   data <- data %>% 
     select(!contains(c("ebird", "birdlife", "birdtree")))
   
+  # Select traits
+  
+  if (!is.null(traits)) {
+    
+    data <- data %>% 
+      select(order, family, genus, species, contains(c(traits)))
+    
+  }
+  
   # group data by taxon level
   
   summary <- data %>% 
@@ -225,13 +234,6 @@ extract_avonet <- function (taxon_system = "birdlife",
 ```
 
 ```{r}
-summary_avonet <- extract_avonet(taxon_system = "birdlife", taxon_level = "family")
-summary_avonet2 <- extract_avonet(taxon_system = "ebird", taxon_level = "genus")
-summary_avonet3 <- extract_avonet(taxon_system = "birdtree", taxon_level = "order")
-summary_avonet4 <- extract_avonet(taxon_system = "birdlife", taxon_level = "species")
-
+summary_avonet <- extract_avonet(taxon_system = "birdlife", taxon_level = "family", traits = c(".length"))
 summary_avonet
-summary_avonet2
-summary_avonet3
-summary_avonet4
 ```

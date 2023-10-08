@@ -78,3 +78,26 @@ avonet$raw_data
 ```{r}
 skim(avonet$raw_data)
 ```
+
+## Assign measurer = "GAPSPECIES" observations in $raw_data to new tibble
+
+measurer = GAPSPECIES are Ave species recognized by the taxonomy classifications included in AvoNet that do not have measurements in AvoNet. While this may be important data for looking at questions related to observed Vs not observed species, they do not need to be included in $raw_data.
+
+```{r}
+gap_species <- avonet$raw_data %>%
+  filter(measurer == "GAPSPECIES") %>% 
+  select(avibase.id, species1_birdlife, species2_ebird, ebird.species.group, species3_birdtree)
+
+x <- setNames(list(gap_species), "gap_species")
+avonet <- append(avonet, x)
+
+avonet$raw_data <- avonet$raw_data %>%
+  filter(measurer != "GAPSPECIES")
+
+avonet$raw_data
+avonet$gap_species
+```
+
+```{r}
+skim(avonet$raw_data)
+```

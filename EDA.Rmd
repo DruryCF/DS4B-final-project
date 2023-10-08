@@ -41,7 +41,7 @@ load_avonet <- function() {
   names <- c("metadata", "birdlife", "ebird", "birdtree", 5, "raw_data", "mass_sources", "data_sources", "measurers", 10, 11)
     
   for (i in 1:11) {
-  x <- setNames(list(read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = i)), names[i])
+  x <- setNames(list(suppressWarnings(read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = i, ))), names[i])
   avonet <- append(avonet, x)
   }
   
@@ -85,6 +85,7 @@ load_avonet <- function() {
 
 ```{r}
 avonet <- load_avonet()
+avonet
 ```
 
 # extract set functional traits and return summary statistics for set taxon level by set taxon system

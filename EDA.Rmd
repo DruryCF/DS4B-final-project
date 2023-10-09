@@ -234,19 +234,19 @@ extract_avonet <- function (taxon_system = "birdlife",
 ```
 
 ```{r}
-summary_avonet <- extract_avonet(taxon_system = "birdlife", taxon_level = "family", traits = c(".length"))
-summary_avonet
+extract <- extract_avonet(taxon_system = "birdlife", taxon_level = "family", traits = c(".length"))
+extract
 ```
 
 # summarise function
 
-Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with extract_avonet(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels.
+Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with extract_avonet(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels. By setting tidy = TRUE, the function will return summary stats in tidy format.
 
 ```{r}
-
 summary_avonet <- function (data,
                             group = c("species"),
-                            stats = c("mean")
+                            stats = c("mean"),
+                            tidy = FALSE
                             ) {
 
   data <- extract
@@ -272,52 +272,66 @@ summary_avonet <- function (data,
     }
   }
   
-  for(i in 1:length(stats)) {
+  if (tidy == FALSE) {
   
-  stat <- extract %>% 
-    summarise_at(traits_numeric, c(get(stats[i])), na.rm = T) %>% 
-    pivot_longer(cols = traits_numeric,
-                 names_to = "trait",
-                 values_to = all_of(stats[i]))
-  
-  stat_name <- paste(stats[i], "_x", sep = "")
-  
-  assign(stat_name, stat)
-  }
-  
-  if (length(stats) > 1) {
+    for(i in 1:length(stats)) {
     
-    stat_name <- paste(stats[1], "_x", sep = "")
+    stat <- extract %>% 
+      summarise_at(traits_numeric, c(get(stats[i])), na.rm = T) %>% 
+      pivot_longer(cols = traits_numeric,
+                   names_to = "trait",
+                   values_to = all_of(stats[i]))
     
-    summary <- get(stat_name)
-  
-    for (i in 2:length(stats)) {
-      
-      stat_name <- paste(stats[i], "_x", sep = "")
-      
-      stat_function_name <- stats[i]
-      
-      stat_values <- get(stat_name)[[3]]
-      
-      summary <- summary %>% 
-        mutate(!!stat_function_name := stat_values)
-      
+    stat_name <- paste(stats[i], "_x", sep = "")
+    
+    assign(stat_name, stat)
     }
     
-  } else {
-    
+    if (length(stats) > 1) {
+      
       stat_name <- paste(stats[1], "_x", sep = "")
       
       summary <- get(stat_name)
     
-    }
-  
+      for (i in 2:length(stats)) {
+        
+        stat_name <- paste(stats[i], "_x", sep = "")
+        
+        stat_function_name <- stats[i]
+        
+        stat_values <- get(stat_name)[[3]]
+        
+        summary <- summary %>% 
+          mutate(!!stat_function_name := stat_values)
+        
+      }
+      
+    } else {
+      
+        stat_name <- paste(stats[1], "_x", sep = "")
+        
+        summary <- get(stat_name)
+      
+      }
+    
+  } else {
+    
+      if (tidy == TRUE) {
+    
+        summary <- extract %>% 
+          summarise_at(traits_numeric, stats, na.rm = T)
+      }
+    }  
+    
   return(summary)
   
 }
 ```
 
 ```{r}
-summary <- summary_avonet(data = extract, group = c("species"), stats = c("mean", "median"))
+summary <- summary_avonet(data = extract, group = c("species"), stats = c("mean", "median", "max", "min", "sd"), tidy = FALSE)
+summary_tidy <- summary_avonet(data = extract, group = c("species"), stats = c("mean", "median", "max", "min", "sd"), tidy = TRUE)
+
 summary
+summary_tidy
 ```

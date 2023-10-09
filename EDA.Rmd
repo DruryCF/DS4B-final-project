@@ -248,8 +248,6 @@ summary_avonet <- function (data,
                             stats = c("mean"),
                             tidy = FALSE
                             ) {
-
-  data <- extract
   
   extract <- data %>% 
     ungroup() %>% 

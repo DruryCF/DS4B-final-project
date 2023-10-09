@@ -246,8 +246,7 @@ Function returns summary statistics defined by 'stats' argument for each 'group'
 summary_avonet <- function (data,
                             group = c("species"),
                             stats = c("mean"),
-                            tidy = FALSE
-                            ) {
+                            tidy = FALSE) {
   
   extract <- data %>% 
     ungroup() %>% 
@@ -263,7 +262,7 @@ summary_avonet <- function (data,
     trait_name <- traits[i]
     assign(traits[i], extract[[i]])
     
-    if (is.numeric(get(traits[i]))) {
+    if (is.numeric(extract[[i]])) {
       
       traits_numeric <- append(traits_numeric, traits[i])
       
@@ -289,7 +288,7 @@ summary_avonet <- function (data,
       
       stat_name <- paste(stats[1], "_x", sep = "")
       
-      summary <- get(stat_name)
+      summary <- get(stat_name, envir = environment())  # envir = environment() was written by ChatGPT to access the local function environment in which stat_name is stored
     
       for (i in 2:length(stats)) {
         
@@ -297,7 +296,7 @@ summary_avonet <- function (data,
         
         stat_function_name <- stats[i]
         
-        stat_values <- get(stat_name)[[3]]
+        stat_values <- get(stat_name, envir = environment())[[3]]
         
         summary <- summary %>% 
           mutate(!!stat_function_name := stat_values)
@@ -308,7 +307,7 @@ summary_avonet <- function (data,
       
         stat_name <- paste(stats[1], "_x", sep = "")
         
-        summary <- get(stat_name)
+        summary <- get(stat_name, envir = environment())
       
       }
     

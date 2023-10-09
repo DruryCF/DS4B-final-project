@@ -238,3 +238,86 @@ summary_avonet <- extract_avonet(taxon_system = "birdlife", taxon_level = "famil
 summary_avonet
 ```
 
+# summarise function
+
+Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with extract_avonet(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels.
+
+```{r}
+
+summary_avonet <- function (data,
+                            group = c("species"),
+                            stats = c("mean")
+                            ) {
+
+  data <- extract
+  
+  extract <- data %>% 
+    ungroup() %>% 
+    group_by(across(all_of(group)))
+
+  traits <- extract %>% 
+    ungroup() %>% 
+    names()
+  
+  traits_numeric <- c()
+  
+  for (i in 1:length(traits)) {
+    trait_name <- traits[i]
+    assign(traits[i], extract[[i]])
+    
+    if (is.numeric(get(traits[i]))) {
+      
+      traits_numeric <- append(traits_numeric, traits[i])
+      
+    }
+  }
+  
+  for(i in 1:length(stats)) {
+  
+  stat <- extract %>% 
+    summarise_at(traits_numeric, c(get(stats[i])), na.rm = T) %>% 
+    pivot_longer(cols = traits_numeric,
+                 names_to = "trait",
+                 values_to = all_of(stats[i]))
+  
+  stat_name <- paste(stats[i], "_x", sep = "")
+  
+  assign(stat_name, stat)
+  }
+  
+  if (length(stats) > 1) {
+    
+    stat_name <- paste(stats[1], "_x", sep = "")
+    
+    summary <- get(stat_name)
+  
+    for (i in 2:length(stats)) {
+      
+      stat_name <- paste(stats[i], "_x", sep = "")
+      
+      stat_function_name <- stats[i]
+      
+      stat_values <- get(stat_name)[[3]]
+      
+      summary <- summary %>% 
+        mutate(!!stat_function_name := stat_values)
+      
+    }
+    
+  } else {
+    
+      stat_name <- paste(stats[1], "_x", sep = "")
+      
+      summary <- get(stat_name)
+    
+    }
+  
+  return(summary)
+  
+}
+```
+
+```{r}
+summary <- summary_avonet(data = extract, group = c("species"), stats = c("mean", "median"))
+summary
+```

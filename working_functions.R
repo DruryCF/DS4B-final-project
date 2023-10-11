@@ -56,9 +56,24 @@ load_avonet <- function(clean = "none") {
   avonet$metadata <- avonet$metadata %>% 
     rename(variable.types = `variable types`)
   
+  # Correct variable class
+  
+  ## raw_data
+  
+  avonet$raw_data$data.type <- avonet$raw_data$data.type %>%  
+    as.factor()
+  avonet$raw_data$protocol <- avonet$raw_data$protocol %>% 
+    as.factor()
+  avonet$raw_data$age <- avonet$raw_data$age %>% 
+    as.factor()
+  
   # Optional cleaning
   
   if (clean != "none") {
+    
+    # Create empty avonet_clean list
+    
+    avonet_clean <- list()
     
     # add index variable to enable identification of excluded data
     
@@ -135,7 +150,6 @@ extract_avonet <- function (taxon_system = "birdlife",
                             traits = NULL) {
   
   t_c <- taxon_system
-  t_l <- taxon_level
   avonet <- load_avonet()
   data <- avonet$raw_data
   
@@ -257,11 +271,6 @@ extract_avonet <- function (taxon_system = "birdlife",
       select(order, family, genus, species, contains(c(traits)))
     
   }
-  
-  # group data by taxon level
-  
-  extract <- data %>% 
-    group_by(!!sym(t_l))
   
   # Return summary
   

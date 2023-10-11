@@ -16,6 +16,8 @@ knitr::opts_knit$set(root.dir = "C:/Users/Drury/OneDrive/Documents/GitHub/DS4B-f
 library(tidyverse, quietly = TRUE)
 library(readxl)
 library(skimr)
+library(GGally)
+source("working_functions.R")
 ```
 
 # Download raw data
@@ -73,47 +75,193 @@ avonet$metadata <- avonet$metadata %>%
 # Sanity check raw_data
 
 ```{r}
-avonet$raw_data
+avonet_clean <- list()
+avonet_clean$raw_data <- avonet$raw_data
+
+avonet_clean$raw_data
 ```
 
 ```{r}
-skim(avonet$raw_data)
+skim(avonet_clean$raw_data)
 ```
+
+## Add an index variable for easy identification of any excluded observations
+
+```{r}
+avonet_clean$raw_data <- avonet_clean$raw_data %>%
+  mutate(index = row_number(),
+         .before = 0)
+```
+
 
 ## Assign measurer = "GAPSPECIES" observations in $raw_data to new tibble
 
 measurer = GAPSPECIES are Ave species recognized by the taxonomy classifications included in AvoNet that do not have measurements in AvoNet. While this may be important data for looking at questions related to observed Vs not observed species, they do not need to be included in $raw_data.
 
 ```{r}
-gap_species <- avonet$raw_data %>%
+gap_species <- avonet_clean$raw_data %>%
   filter(measurer == "GAPSPECIES") %>% 
   select(avibase.id, species1_birdlife, species2_ebird, ebird.species.group, species3_birdtree)
 
 x <- setNames(list(gap_species), "gap_species")
-avonet <- append(avonet, x)
+avonet_clean <- append(avonet_clean, x)
 
-avonet$raw_data <- avonet$raw_data %>%
+avonet_clean$raw_data <- avonet_clean$raw_data %>%
   filter(measurer != "GAPSPECIES")
 
-avonet$raw_data
-avonet$gap_species
+avonet_clean$raw_data
+avonet_clean$gap_species
 ```
 
 ```{r}
-skim(avonet$raw_data)
+skim(avonet_clean$raw_data)
 ```
+
+Note that after removal of these observations, the number of rows is 90,020 which is the expected number of individuals measured.
 
 ## Remove empty variables from $raw_data
 
-From skim(), can see that 'locality' and 'country' are both empty variables. They can therefore be removed from $raw_data
+From skim(), can see that 'locality' and 'country' are both empty variables. This is because they represent data that will be submitted by measurers or transcribed from handwritten labels for museum specimens. The data has been embargoed for a year while this process is undertaken. Thus, until the data they represent is complied and released, they can be removed from $raw_data.
 
 ```{r}
-avonet$raw_data <- avonet$raw_data %>% 
+avonet_clean$raw_data <- avonet_clean$raw_data %>% 
   select(!c(locality, country))
 
-avonet$raw_data
+avonet_clean$raw_data
 ```
 
 ```{r}
-skim(avonet$raw_data)
+skim(avonet_clean$raw_data)
+```
+
+## Check country_wri; have 206, expect 181
+
+```{r}
+unique(avonet_clean$raw_data$country_wri)
+```
+
+The following are territories and other non-country bodies of geographic significance:
+
+"French Southern and Antarctic Lands"
+"Pitcairn Islands"
+"Northern Mariana Islands"
+"Guam"
+"Cayman Islands"
+"Puerto Rico"
+"Palestine"
+"Falkland Islands"
+"Bermuda"
+"South Georgia and South Sandwich Islands"
+"Saint Helena"
+"Antarctica"
+"Faroe Islands"
+"Turks and Caicos Islands"
+"Norfolk Island"
+"Montserrat"
+"United States Virgin Islands"            
+"British Virgin Islands"
+"American Samoa"
+"Gibraltar"
+"Guernsey"
+
+This leaves 185 countries recorded in 'raw_data', four more than the expected 181. It's likely that I have missed the last four non-countries as no value recorded in 'raw_data$country_wri' appears to be a misspelling of another or otherwise inappropriate.
+
+## Check avibase.id missing value
+
+```{r}
+avonet_clean$raw_data %>% 
+  filter(is.na(avibase.id))
+```
+
+Individual is not an identified species. As a major feature of AvoNet is its multiple taxonomy classification systems enabling integration with other databases, this observation will be removed. Note that this observation would still be useful in investigating possible relationships between the recorded functional traits (e.g. Is beak.depth correlated with tarsus.length?). A feature may be integrated into Humdrum later to toggle this exclusion on/off in the cleaned dataset.
+
+```{r}
+avonet_clean$raw_data <- avonet_clean$raw_data %>% 
+  filter(!is.na(avibase.id))
+
+avonet_clean$raw_data
+```
+
+```{r}
+skim(avonet_clean$raw_data)
+```
+
+## Correcting variable class
+
+data.type is a factor variable where 1 = museum specimen, and 2 = live individual. Similarly, protocol is a factor variable where 0 = biometric measurements not taken using AVONET protocol, and 1 = biometric measurements taken using AVONET protocol. Age is also a factor where 0 = adult specimen and 1 = immature specimen.
+
+```{r}
+avonet_clean$raw_data$data.type <- avonet_clean$raw_data$data.type %>%  
+  as.factor()
+avonet_clean$raw_data$protocol <- avonet_clean$raw_data$protocol %>% 
+  as.factor()
+avonet_clean$raw_data$age <- avonet_clean$raw_data$age %>% 
+  as.factor()
+```
+
+```{r}
+skim(avonet_clean$raw_data)
+```
+
+We now have two variables of class factor and, subtracting index, we now have the expected 11 continuous morphological traits.
+
+## Check numeric variables data spread by species -> identify extreme outliers
+
+```{r}
+# Extract numeric functional traits
+
+avonet_raw_numeric <- extract_avonet(taxon_system = "birdlife", taxon_level = "species", traits = c("beak.", ".length", "kipps", "secondary", "hand"))
+avonet_raw_numeric
+```
+
+Note that extract_avonet() calls load_avonet() and therefore this data hasn't undergone prior cleaning. 
+
+```{r}
+# Apply summary statistics including means:medians which can suggest extreme outliers if significantly different from 1
+avonet_raw_summary <- summary_avonet(avonet_raw_numeric, group = c("species"), stats = c("mean", "median", "min", "max", "sd")) %>% 
+  mutate(means_medians_ratio = (mean / median)) %>% 
+  arrange(desc(means_medians_ratio))
+
+avonet_raw_summary <- avonet_raw_summary %>% 
+  filter(!is.na(species))
+
+avonet_raw_summary
+```
+
+Check individual values of Atrichornis rufescens for hand-wing.index and kipps.distance (include wing.length and secondary1 as also wing measures); additionally include sex and age to determine if means:medians difference is due to skewed representation.
+
+```{r}
+extract_all <- extract_avonet()
+
+extract_all %>% 
+  select(species, sex, age, `hand-wing.index`, kipps.distance, wing.length, secondary1) %>% 
+  filter(species == "Atrichornis rufescens")
+```
+
+Note that kipps.distance approximates the difference between wing.length and secondary1, and hand-wing.index is 100*kipps.distance/wing.length.
+
+The ~13mm difference between the outlier secondary1 value and the others was likely magnified in the other wing measures. Given that and the small sample size, this observation will be assumed representative of the species and will not be removed at this time.
+
+## Return removed observations and remove index variable from $raw_data
+
+```{r}
+avonet_dirty <- list()
+
+avonet_dirty$raw_data <- avonet$raw_data %>% 
+  mutate(index = row_number(),
+         .before = 0)
+
+avonet_exclude <- list()
+
+avonet_exclude$raw_data <- avonet_dirty$raw_data %>% 
+  filter(!(index %in% c(avonet_clean$raw_data$index)))
+
+avonet_exclude$raw_data
+```
+
+```{r}
+avonet_clean$raw_data <- avonet_clean$raw_data %>% 
+  select(!index)
+
+avonet_clean
 ```

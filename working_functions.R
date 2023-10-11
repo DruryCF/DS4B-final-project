@@ -92,6 +92,8 @@ load_avonet <- function(clean = "none") {
       avonet_clean$raw_data <- avonet_clean$raw_data %>% 
         filter(measurer != "GAPSPECIES")
       
+      avonet$gapspecies <- avonet_clean$gapspecies
+      
     }
     
     if (clean %in% c("unknown", "all")) {
@@ -129,7 +131,7 @@ load_avonet <- function(clean = "none") {
     # Override dirty data with clean
     
     avonet$raw_data <- avonet_clean$raw_data
-    
+
     # Write excluded observations to global environment
     avonet_exclude <<- avonet_exclude
     

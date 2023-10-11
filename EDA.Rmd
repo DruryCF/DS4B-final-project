@@ -114,6 +114,8 @@ load_avonet <- function(clean = "none") {
       avonet_clean$raw_data <- avonet_clean$raw_data %>% 
         filter(measurer != "GAPSPECIES")
       
+      avonet$gapspecies <- avonet_clean$gapspecies
+      
     }
     
     if (clean %in% c("unknown", "all")) {

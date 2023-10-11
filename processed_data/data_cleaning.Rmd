@@ -203,7 +203,7 @@ avonet_clean$raw_data$age <- avonet_clean$raw_data$age %>%
 skim(avonet_clean$raw_data)
 ```
 
-We now have two variables of class factor and, subtracting index, we now have the expected 11 continuous morphological traits.
+We now have two variables of class factor and, subtracting index, we now have 10 continuous morphological traits. This is one less than the expected 11 however it may be that an additional continuous morphological trait is stored alongside the ecological and geographic traits in the birdlife, ebird, and birdtree tibbles.
 
 ## Check numeric variables data spread by species -> identify extreme outliers
 

@@ -240,13 +240,14 @@ extract
 
 # summarise function
 
-Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with extract_avonet(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels. By setting tidy = TRUE, the function will return summary stats in tidy format.
+Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with extract_avonet(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels. By setting tidy = TRUE, the function will return summary stats in tidy format. Function will always return count data for each group.
 
 ```{r}
 summary_avonet <- function (data,
                             group = c("species"),
                             stats = c("mean"),
-                            tidy = FALSE) {
+                            tidy = FALSE
+                            ) {
   
   extract <- data %>% 
     ungroup() %>% 
@@ -303,6 +304,29 @@ summary_avonet <- function (data,
         
       }
       
+      # Add count data
+      
+      count <- extract %>% 
+          summarise(count = n())
+      
+      name <- group[length(group)]
+      
+      count <- count %>% 
+        rename(var = name)
+
+      group_lookup <- setNames(c(count$count), c(count$var))
+      
+      summary <- summary %>% 
+        rename(var = name)
+      
+      summary$count <- as.character(group_lookup[summary$var])
+
+      summary <- summary %>% 
+        rename(!!name := var) %>% 
+        relocate(count,
+                 .after = trait)
+      
+      
     } else {
       
         stat_name <- paste(stats[1], "_x", sep = "")
@@ -317,8 +341,16 @@ summary_avonet <- function (data,
     
         summary <- extract %>% 
           summarise_at(traits_numeric, stats, na.rm = T)
+        
+        count <- extract %>% 
+          summarise(n())
+        
+        summary <- summary %>% 
+          mutate(count = count[[2]],
+                 .after = 1)
+        
       }
-    }  
+    } 
     
   return(summary)
   

@@ -1,0 +1,325 @@
+# Install data
+
+install_avonet <- function(filename){
+  
+  cat("Downloading AvoNet...\n")
+  
+  download.file(url = "https://figshare.com/ndownloader/files/34480856?private_link=b990722d72a26b5bfead", destfile = filename, mode = "wb")
+  
+}
+
+
+
+# Load data
+
+load_avonet <- function() {
+  
+  # store avonet as list of tibbles
+  
+  avonet <- list()
+  
+  names <- c("metadata", "birdlife", "ebird", "birdtree", "pigot", "raw_data", "mass_sources", "data_sources", "measurers", "crosswalk_birdlife_ebird", "crosswalk_birdlife_birdtree")
+  
+  for (i in 1:11) {
+    x <- setNames(list(suppressWarnings(read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = i, na = "NA"))), names[i])
+    avonet <- append(avonet, x)
+  }
+  
+  # Rename variables
+  
+  # Make variables lowercase across tibbles
+  
+  colnames(avonet$metadata) <- tolower(colnames(avonet$metadata))
+  colnames(avonet$birdlife) <- tolower(colnames(avonet$birdlife))
+  colnames(avonet$ebird) <- tolower(colnames(avonet$ebird))
+  colnames(avonet$birdtree) <- tolower(colnames(avonet$birdtree))
+  colnames(avonet$pigot) <- tolower(colnames(avonet$pigot))
+  colnames(avonet$raw_data) <- tolower(colnames(avonet$raw_data))
+  colnames(avonet$mass_sources) <- tolower(colnames(avonet$mass_sources))
+  colnames(avonet$data_sources) <- tolower(colnames(avonet$data_sources))
+  colnames(avonet$measurers) <- tolower(colnames(avonet$measurers))
+  colnames(avonet$crosswalk_birdlife_ebird) <- tolower(colnames(avonet$crosswalk_birdlife_ebird))
+  colnames(avonet$crosswalk_birdlife_birdtree) <- tolower(colnames(avonet$crosswalk_birdlife_birdtree))
+  
+  # Make variable character values lowercase in metadata tibble -> method adapted from StackOverflow (https://stackoverflow.com/questions/50615116/renaming-character-variables-in-a-column-in-data-frame-r)
+  
+  variable_old_name <- c(avonet$metadata$variable)
+  
+  variable_new_name <- c(tolower(avonet$metadata$variable))
+  
+  variable_lookup <- setNames(variable_new_name, variable_old_name)
+  
+  avonet$metadata$variable <- as.character(variable_lookup[avonet$metadata$variable])
+  
+  # Remove space in 'variable types' in metadata tibble
+  
+  avonet$metadata <- avonet$metadata %>% 
+    rename(variable.types = `variable types`)
+  
+  # Return avonet
+  
+  return(avonet)
+  
+}
+
+
+
+# extract data
+
+extract_avonet <- function (taxon_system = "birdlife",
+                            taxon_level = "species",
+                            traits = NULL) {
+  
+  t_c <- taxon_system
+  t_l <- taxon_level
+  avonet <- load_avonet()
+  data <- avonet$raw_data
+  
+  # Extract taxon systems
+  
+  taxon_systems <- list()
+  
+  birdlife <- avonet$birdlife %>% 
+    select(order1, family1, species1) %>% 
+    rowwise() %>% 
+    mutate(genus = strsplit(species1, " ")[[1]][1], # Code written by ChatGPT to extract genus names from species
+           .before = species1) %>%
+    rename(species = species1,
+           order = order1,
+           family = family1)
+  
+  ebird <- avonet$ebird %>% 
+    select(order2, family2, species2) %>% 
+    rowwise() %>% 
+    mutate(genus = strsplit(species2, " ")[[1]][1], # Code written by ChatGPT to extract genus names from species
+           .before = species2) %>%
+    rename(species = species2,
+           order = order2,
+           family = family2)
+  
+  birdtree <- avonet$birdtree %>% 
+    select(order3, family3, species3) %>% 
+    rowwise() %>% 
+    mutate(genus = strsplit(species3, " ")[[1]][1], # Code written by ChatGPT to extract genus names from species
+           .before = species3) %>%
+    rename(species = species3,
+           order = order3,
+           family = family3)
+  
+  taxon_systems$birdlife <- birdlife
+  taxon_systems$ebird <- ebird
+  taxon_systems$birdtree <- birdtree
+  
+  # Retrieve taxon system
+  
+  if (tolower(t_c) == "birdlife") { # use of tolower() for case insensitive if() taken from stack overflow (https://stackoverflow.com/questions/51488049/r-case-insensitive-if-check)
+    
+    t_system <- taxon_systems$birdlife
+    
+    cat("\ntaxon system:", tolower(t_c))
+    
+  } else {
+    
+    if (tolower(t_c) == "ebird") {
+      
+      t_system <- taxon_systems$ebird
+      cat("\ntaxon system:", tolower(t_c))
+      
+    } else {
+      
+      if (tolower(t_c) == "birdtree") {
+        
+        t_system <- taxon_systems$birdtree
+        cat("\ntaxon system:", tolower(t_c))
+        
+      } else {
+        
+        stop(paste(t_c, "is not a recognised taxonomy classification. Try 'birdlife', 'ebird', or 'birdtree'"))
+        
+      }
+    }
+  }
+  
+  # add taxon system to raw_data -> method adapted from StackOverflow (https://stackoverflow.com/questions/50615116/renaming-character-variables-in-a-column-in-data-frame-r)
+  
+  taxon_new <- t_system[1:3]
+  
+  taxon_species <- t_system[4]
+  
+  taxon_names_lookup_o <- setNames(c(taxon_new$order), c(taxon_species$species)) 
+  taxon_names_lookup_f <- setNames(c(taxon_new$family), c(taxon_species$species))
+  taxon_names_lookup_g <- setNames(c(taxon_new$genus), c(taxon_species$species))
+  
+  ## retrieve taxon specific species variable name in raw_data
+  
+  if (tolower(t_c) == "birdlife") {
+    i <- 1
+  }
+  
+  if (tolower(t_c) == "ebird") {
+    i <- 2
+  }
+  
+  if (tolower(t_c) == "birdtree") {
+    i <- 3
+  }
+  
+  species_variable_name <- paste("species", i, "_", t_c, sep = "")
+  
+  ## Reassign species to new taxon level
+  
+  data <- data %>% 
+    rename(species = all_of(species_variable_name))
+  
+  data$order <- as.character(taxon_names_lookup_o[data$species])
+  data$family <- as.character(taxon_names_lookup_f[data$species])
+  data$genus <- as.character(taxon_names_lookup_g[data$species])
+  
+  ## Rearrange column order
+  
+  data <- data %>% 
+    select(order, family, genus, species, everything())
+  
+  ## Drop unneeded taxon variables
+  
+  data <- data %>% 
+    select(!contains(c("ebird", "birdlife", "birdtree")))
+  
+  # Select traits
+  
+  if (!is.null(traits)) {
+    
+    data <- data %>% 
+      select(order, family, genus, species, contains(c(traits)))
+    
+  }
+  
+  # group data by taxon level
+  
+  extract <- data %>% 
+    group_by(!!sym(t_l))
+  
+  # Return summary
+  
+  return(extract)
+  
+}
+
+
+
+# summary function
+
+summary_avonet <- function (data,
+                            group = c("species"),
+                            stats = c("mean"),
+                            tidy = FALSE
+) {
+  
+  extract <- data %>% 
+    ungroup() %>% 
+    group_by(across(all_of(group)))
+  
+  traits <- extract %>% 
+    ungroup() %>% 
+    names()
+  
+  traits_numeric <- c()
+  
+  for (i in 1:length(traits)) {
+    trait_name <- traits[i]
+    assign(traits[i], extract[[i]])
+    
+    if (is.numeric(extract[[i]])) {
+      
+      traits_numeric <- append(traits_numeric, traits[i])
+      
+    }
+  }
+  
+  if (tidy == FALSE) {
+    
+    for(i in 1:length(stats)) {
+      
+      stat <- extract %>% 
+        summarise_at(traits_numeric, c(get(stats[i])), na.rm = T) %>% 
+        pivot_longer(cols = traits_numeric,
+                     names_to = "trait",
+                     values_to = all_of(stats[i]))
+      
+      stat_name <- paste(stats[i], "_x", sep = "")
+      
+      assign(stat_name, stat)
+    }
+    
+    if (length(stats) > 1) {
+      
+      stat_name <- paste(stats[1], "_x", sep = "")
+      
+      summary <- get(stat_name, envir = environment())  # envir = environment() was written by ChatGPT to access the local function environment in which stat_name is stored
+      
+      for (i in 2:length(stats)) {
+        
+        stat_name <- paste(stats[i], "_x", sep = "")
+        
+        stat_function_name <- stats[i]
+        
+        stat_values <- get(stat_name, envir = environment())[[3]]
+        
+        summary <- summary %>% 
+          mutate(!!stat_function_name := stat_values)
+        
+      }
+      
+      # Add count data
+      
+      count <- extract %>% 
+        summarise(count = n())
+      
+      name <- group[length(group)]
+      
+      count <- count %>% 
+        rename(var = name)
+      
+      group_lookup <- setNames(c(count$count), c(count$var))
+      
+      summary <- summary %>% 
+        rename(var = name)
+      
+      summary$count <- as.character(group_lookup[summary$var])
+      
+      summary <- summary %>% 
+        rename(!!name := var) %>% 
+        relocate(count,
+                 .after = trait)
+      
+      
+    } else {
+      
+      stat_name <- paste(stats[1], "_x", sep = "")
+      
+      summary <- get(stat_name, envir = environment())
+      
+    }
+    
+  } else {
+    
+    if (tidy == TRUE) {
+      
+      summary <- extract %>% 
+        summarise_at(traits_numeric, stats, na.rm = T)
+      
+      count <- extract %>% 
+        summarise(n())
+      
+      summary <- summary %>% 
+        mutate(count = count[[2]],
+               .after = 1)
+      
+    }
+  } 
+  
+  cat("If present, NA values are included in count")
+  
+  return(summary)
+  
+}

@@ -12,7 +12,7 @@ install_avonet <- function(filename){
 
 # Load data
 
-load_avonet <- function() {
+load_avonet <- function(clean = "none") {
   
   # store avonet as list of tibbles
   
@@ -55,6 +55,70 @@ load_avonet <- function() {
   
   avonet$metadata <- avonet$metadata %>% 
     rename(variable.types = `variable types`)
+  
+  # Optional cleaning
+  
+  if (clean != "none") {
+    
+    # add index variable to enable identification of excluded data
+    
+    avonet_clean$raw_data <- avonet$raw_data %>%
+      mutate(index = row_number(),
+             .before = 0)
+    
+    if (clean %in% c("gapspecies", "all")) {
+      
+      # Relocate raw_data with measurer = gapspecies to avonet$gapspecies
+      
+      avonet_clean$gapspecies <- avonet_clean$raw_data %>% 
+        filter(measurer == "GAPSPECIES") %>% 
+        select(contains("species"), "avibase.id")
+      
+      avonet_clean$raw_data <- avonet_clean$raw_data %>% 
+        filter(measurer != "GAPSPECIES")
+      
+    }
+    
+    if (clean %in% c("unknown", "all")) {
+      
+      avonet_clean$raw_data <- avonet_clean$raw_data %>% 
+        filter(!is.na(avibase.id))
+      
+    }
+    
+    if (clean %in% c("empty", "all")) {
+      
+      avonet_clean$raw_data <- avonet_clean$raw_data %>% 
+        select(!c(locality, country))
+      
+    }
+    
+    # Identify excluded observations
+    
+    avonet_dirty <- list()
+    
+    avonet_dirty$raw_data <- avonet$raw_data %>% 
+      mutate(index = row_number(),
+             .before = 0)
+    
+    avonet_exclude <- list()
+    
+    avonet_exclude$raw_data <- avonet_dirty$raw_data %>% 
+      filter(!(index %in% c(avonet_clean$raw_data$index)))
+    
+    # Remove index variable from $raw_data
+    
+    avonet_clean$raw_data <- avonet_clean$raw_data %>% 
+      select(!index)
+    
+    # Override dirty data with clean
+    
+    avonet$raw_data <- avonet_clean$raw_data
+    
+    # Write excluded observations to global environment
+    avonet_exclude <<- avonet_exclude
+    
+  }
   
   # Return avonet
   

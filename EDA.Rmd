@@ -31,18 +31,20 @@ install_avonet(filename = "raw_data/AVONET Supplementary dataset 1.xlsx")
 
 # Load AvoNet
 
-```{r}
-load_avonet <- function() {
+Function loads, tidies, and applies optional cleaning to AvoNet dataset
 
+```{r}
+load_avonet <- function(clean = "none") {
+  
   # store avonet as list of tibbles
   
   avonet <- list()
   
-  names <- c("metadata", "birdlife", "ebird", "birdtree", 5, "raw_data", "mass_sources", "data_sources", "measurers", 10, 11)
-    
+  names <- c("metadata", "birdlife", "ebird", "birdtree", "pigot", "raw_data", "mass_sources", "data_sources", "measurers", "crosswalk_birdlife_ebird", "crosswalk_birdlife_birdtree")
+  
   for (i in 1:11) {
-  x <- setNames(list(suppressWarnings(read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = i, na = "NA"))), names[i])
-  avonet <- append(avonet, x)
+    x <- setNames(list(suppressWarnings(read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = i, na = "NA"))), names[i])
+    avonet <- append(avonet, x)
   }
   
   # Rename variables
@@ -53,22 +55,22 @@ load_avonet <- function() {
   colnames(avonet$birdlife) <- tolower(colnames(avonet$birdlife))
   colnames(avonet$ebird) <- tolower(colnames(avonet$ebird))
   colnames(avonet$birdtree) <- tolower(colnames(avonet$birdtree))
-  colnames(avonet$`5`) <- tolower(colnames(avonet$`5`))
+  colnames(avonet$pigot) <- tolower(colnames(avonet$pigot))
   colnames(avonet$raw_data) <- tolower(colnames(avonet$raw_data))
   colnames(avonet$mass_sources) <- tolower(colnames(avonet$mass_sources))
   colnames(avonet$data_sources) <- tolower(colnames(avonet$data_sources))
   colnames(avonet$measurers) <- tolower(colnames(avonet$measurers))
-  colnames(avonet$`10`) <- tolower(colnames(avonet$`10`))
-  colnames(avonet$`11`) <- tolower(colnames(avonet$`11`))
+  colnames(avonet$crosswalk_birdlife_ebird) <- tolower(colnames(avonet$crosswalk_birdlife_ebird))
+  colnames(avonet$crosswalk_birdlife_birdtree) <- tolower(colnames(avonet$crosswalk_birdlife_birdtree))
   
   # Make variable character values lowercase in metadata tibble -> method adapted from StackOverflow (https://stackoverflow.com/questions/50615116/renaming-character-variables-in-a-column-in-data-frame-r)
   
   variable_old_name <- c(avonet$metadata$variable)
-
+  
   variable_new_name <- c(tolower(avonet$metadata$variable))
-
+  
   variable_lookup <- setNames(variable_new_name, variable_old_name)
-
+  
   avonet$metadata$variable <- as.character(variable_lookup[avonet$metadata$variable])
   
   # Remove space in 'variable types' in metadata tibble
@@ -76,15 +78,79 @@ load_avonet <- function() {
   avonet$metadata <- avonet$metadata %>% 
     rename(variable.types = `variable types`)
   
+  # Optional cleaning
+  
+  if (clean != "none") {
+    
+    # add index variable to enable identification of excluded data
+    
+    avonet_clean$raw_data <- avonet$raw_data %>%
+      mutate(index = row_number(),
+             .before = 0)
+   
+    if (clean %in% c("gapspecies", "all")) {
+      
+      # Relocate raw_data with measurer = gapspecies to avonet$gapspecies
+      
+      avonet_clean$gapspecies <- avonet_clean$raw_data %>% 
+        filter(measurer == "GAPSPECIES") %>% 
+        select(contains("species"), "avibase.id")
+      
+      avonet_clean$raw_data <- avonet_clean$raw_data %>% 
+        filter(measurer != "GAPSPECIES")
+      
+    }
+    
+    if (clean %in% c("unknown", "all")) {
+      
+      avonet_clean$raw_data <- avonet_clean$raw_data %>% 
+        filter(!is.na(avibase.id))
+      
+    }
+    
+    if (clean %in% c("empty", "all")) {
+      
+      avonet_clean$raw_data <- avonet_clean$raw_data %>% 
+        select(!c(locality, country))
+      
+    }
+    
+    # Identify excluded observations
+    
+    avonet_dirty <- list()
+
+    avonet_dirty$raw_data <- avonet$raw_data %>% 
+      mutate(index = row_number(),
+             .before = 0)
+    
+    avonet_exclude <- list()
+    
+    avonet_exclude$raw_data <- avonet_dirty$raw_data %>% 
+      filter(!(index %in% c(avonet_clean$raw_data$index)))
+    
+    # Remove index variable from $raw_data
+    
+    avonet_clean$raw_data <- avonet_clean$raw_data %>% 
+      select(!index)
+    
+    # Override dirty data with clean
+    
+    avonet$raw_data <- avonet_clean$raw_data
+    
+    # Write excluded observations to global environment
+    avonet_exclude <<- avonet_exclude
+    
+  }
+  
   # Return avonet
   
   return(avonet)
-
+  
 }
 ```
 
 ```{r}
-avonet <- load_avonet()
+avonet <- load_avonet(clean = "all")
 avonet
 ```
 
@@ -240,7 +306,7 @@ extract
 
 # summarise function
 
-Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with extract_avonet(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels. By setting tidy = TRUE, the function will return summary stats in tidy format. Function will always return count data for each group.
+Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with extract_avonet(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels. By setting tidy = TRUE, the function will return summary stats in tidy format. Function will always return count data for each group. Note that count data returns the number of observations for that species, not the number of species with values for that trait.
 
 ```{r}
 summary_avonet <- function (data,
@@ -350,8 +416,10 @@ summary_avonet <- function (data,
                  .after = 1)
         
       }
-    } 
-    
+   } 
+  
+  cat("If present, NA values are included in count")
+  
   return(summary)
   
 }

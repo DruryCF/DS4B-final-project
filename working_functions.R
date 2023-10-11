@@ -146,7 +146,6 @@ load_avonet <- function(clean = "none") {
 # extract data
 
 extract_avonet <- function (taxon_system = "birdlife",
-                            taxon_level = "species",
                             traits = NULL) {
   
   t_c <- taxon_system

@@ -1307,6 +1307,107 @@ ul.task-list{list-style: none;}
 
 
 
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -1479,7 +1580,7 @@ Exploratory Data Analysis using the AvoNet dataset</h3>
 
 <div id="wordfigure-count" class="section level1">
 <h1>Word/figure count</h1>
-<p>words: 550</p>
+<p>words: 1409</p>
 <p>figures: 0</p>
 </div>
 <div id="location-on-github" class="section level1">
@@ -1503,11 +1604,12 @@ databases.</p>
 <ul>
 <li>Build functions to:
 <ul>
-<li>install and load data</li>
+<li>install and load data -&gt; stored as relational database</li>
 <li>tidy data</li>
-<li>clean data (As AvoNet is a single release, it can be
-pre-cleaned)</li>
-<li>facilitate Exploratory Data Analysis (EDA)</li>
+<li>clean data -&gt; data cleaning toggled when loading</li>
+<li>facilitate Exploratory Data Analysis (EDA) -&gt; extract functional
+trait data according to different taxonomies and apply summary
+statistics</li>
 </ul></li>
 </ul>
 <p>Justification:</p>
@@ -1523,15 +1625,571 @@ EDA and aid in addressing specific research questions.</p>
 </div>
 <div id="raw-data" class="section level1">
 <h1>Raw data</h1>
+<p>The raw data is obtainable from: <a href="https://figshare.com/ndownloader/files/34480856?private_link=b990722d72a26b5bfead" class="uri">https://figshare.com/ndownloader/files/34480856?private_link=b990722d72a26b5bfead</a></p>
+<p>which was linked in the original AvoNet paper (Tobias et al.,
+2022).</p>
+<p>Humdrum has a function, install_avonet(), to accomplish this for the
+user.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.2     ✔ readr     2.1.4
+## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+## ✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+## ✔ purrr     1.0.1     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;working_functions.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">install_avonet</span>(<span class="at">filename =</span> <span class="st">&quot;raw_data/AVONET Supplementary dataset 1.xlsx&quot;</span>)</span></code></pre></div>
+<pre><code>## Downloading AvoNet...</code></pre>
 </div>
 <div id="data-wrangling" class="section level1">
 <h1>Data wrangling</h1>
+<p>Humdrum’s function load_avonet() automatically tidies and optionally
+cleans the AvoNet dataset. Currently, cleaning is limited to the
+raw_data tibble. The clean argument can variably clean some of the data
+based on defined criteria e.g. clean = “gapspecies” will remove and
+relocate all species with no observations from the raw_data tibble to a
+new gapspecies tibble. When cleaning is applied, the avonet_exclude
+object will be written to the global environment, detailing removed
+observations.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>avonet_tidy <span class="ot">&lt;-</span> <span class="fu">load_avonet</span>()</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>avonet_clean <span class="ot">&lt;-</span> <span class="fu">load_avonet</span>(<span class="at">clean =</span> <span class="st">&quot;all&quot;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>avonet_tidy<span class="sc">$</span>raw_data</span></code></pre></div>
+<pre><code>## # A tibble: 90,371 × 26
+##    avibase.id       species1_birdlife      species2_ebird    ebird.species.group
+##    &lt;chr&gt;            &lt;chr&gt;                  &lt;chr&gt;             &lt;chr&gt;              
+##  1 AVIBASE-B3F5E5E2 Abeillia abeillei      Abeillia abeillei Abeillia abeillei  
+##  2 AVIBASE-B3F5E5E2 Abeillia abeillei      Abeillia abeillei Abeillia abeillei  
+##  3 AVIBASE-B3F5E5E2 Abeillia abeillei      Abeillia abeillei Abeillia abeillei  
+##  4 AVIBASE-B3F5E5E2 Abeillia abeillei      Abeillia abeillei Abeillia abeillei  
+##  5 AVIBASE-B3F5E5E2 Abeillia abeillei      Abeillia abeillei Abeillia abeillei  
+##  6 AVIBASE-684016CB Abroscopus albogularis Abroscopus albog… Abroscopus albogul…
+##  7 AVIBASE-684016CB Abroscopus albogularis Abroscopus albog… Abroscopus albogul…
+##  8 AVIBASE-684016CB Abroscopus albogularis Abroscopus albog… Abroscopus albogul…
+##  9 AVIBASE-684016CB Abroscopus albogularis Abroscopus albog… Abroscopus albogul…
+## 10 AVIBASE-684016CB Abroscopus albogularis Abroscopus albog… Abroscopus albogul…
+## # ℹ 90,361 more rows
+## # ℹ 22 more variables: species3_birdtree &lt;chr&gt;, data.type &lt;fct&gt;, source &lt;chr&gt;,
+## #   specimen.number &lt;chr&gt;, sex &lt;chr&gt;, age &lt;fct&gt;, locality &lt;lgl&gt;,
+## #   country_wri &lt;chr&gt;, country &lt;lgl&gt;, beak.length_culmen &lt;dbl&gt;,
+## #   beak.length_nares &lt;dbl&gt;, beak.width &lt;dbl&gt;, beak.depth &lt;dbl&gt;,
+## #   tarsus.length &lt;dbl&gt;, wing.length &lt;dbl&gt;, kipps.distance &lt;dbl&gt;,
+## #   secondary1 &lt;dbl&gt;, `hand-wing.index` &lt;dbl&gt;, tail.length &lt;dbl&gt;, …</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>avonet_clean<span class="sc">$</span>raw_data</span></code></pre></div>
+<pre><code>## # A tibble: 90,019 × 24
+##    avibase.id       species1_birdlife      species2_ebird    ebird.species.group
+##    &lt;chr&gt;            &lt;chr&gt;                  &lt;chr&gt;             &lt;chr&gt;              
+##  1 AVIBASE-B3F5E5E2 Abeillia abeillei      Abeillia abeillei Abeillia abeillei  
+##  2 AVIBASE-B3F5E5E2 Abeillia abeillei      Abeillia abeillei Abeillia abeillei  
+##  3 AVIBASE-B3F5E5E2 Abeillia abeillei      Abeillia abeillei Abeillia abeillei  
+##  4 AVIBASE-B3F5E5E2 Abeillia abeillei      Abeillia abeillei Abeillia abeillei  
+##  5 AVIBASE-B3F5E5E2 Abeillia abeillei      Abeillia abeillei Abeillia abeillei  
+##  6 AVIBASE-684016CB Abroscopus albogularis Abroscopus albog… Abroscopus albogul…
+##  7 AVIBASE-684016CB Abroscopus albogularis Abroscopus albog… Abroscopus albogul…
+##  8 AVIBASE-684016CB Abroscopus albogularis Abroscopus albog… Abroscopus albogul…
+##  9 AVIBASE-684016CB Abroscopus albogularis Abroscopus albog… Abroscopus albogul…
+## 10 AVIBASE-684016CB Abroscopus albogularis Abroscopus albog… Abroscopus albogul…
+## # ℹ 90,009 more rows
+## # ℹ 20 more variables: species3_birdtree &lt;chr&gt;, data.type &lt;fct&gt;, source &lt;chr&gt;,
+## #   specimen.number &lt;chr&gt;, sex &lt;chr&gt;, age &lt;fct&gt;, country_wri &lt;chr&gt;,
+## #   beak.length_culmen &lt;dbl&gt;, beak.length_nares &lt;dbl&gt;, beak.width &lt;dbl&gt;,
+## #   beak.depth &lt;dbl&gt;, tarsus.length &lt;dbl&gt;, wing.length &lt;dbl&gt;,
+## #   kipps.distance &lt;dbl&gt;, secondary1 &lt;dbl&gt;, `hand-wing.index` &lt;dbl&gt;,
+## #   tail.length &lt;dbl&gt;, measurer &lt;chr&gt;, protocol &lt;fct&gt;, publication &lt;chr&gt;</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>avonet_clean<span class="sc">$</span>gapspecies</span></code></pre></div>
+<pre><code>## # A tibble: 351 × 5
+##    species1_birdlife        species2_ebird ebird.species.group species3_birdtree
+##    &lt;chr&gt;                    &lt;chr&gt;          &lt;chr&gt;               &lt;chr&gt;            
+##  1 Acridotheres leucocepha… Acridotheres … Acridotheres burma… Sturnus burmanni…
+##  2 Acridotheres tertius     Acridotheres … Acridotheres melan… Sturnus burmanni…
+##  3 Acridotheres tricolor    Acridotheres … Acridotheres melan… Sturnus burmanni…
+##  4 Acrocephalus longirostr… Acrocephalus … Acrocephalus longi… Acrocephalus caf…
+##  5 Aegithalos annamensis    Aegithalos co… Aegithalos concinn… Aegithalos conci…
+##  6 Aegithalos iredalei      Aegithalos co… Aegithalos concinn… Aegithalos conci…
+##  7 Aerodramus nuditarsus    Aerodramus nu… Aerodramus nuditar… Collocalia nudit…
+##  8 Arremon axillaris        Arremon tacit… Arremon taciturnus  Arremon taciturn…
+##  9 Aethopyga guimarasensis  Aethopyga gui… Aethopyga guimaras… Aethopyga flagra…
+## 10 Aethopyga magnifica      Aethopyga mag… Aethopyga magnifica Aethopyga sipara…
+## # ℹ 341 more rows
+## # ℹ 1 more variable: avibase.id &lt;chr&gt;</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>avonet_exclude<span class="sc">$</span>raw_data</span></code></pre></div>
+<pre><code>## # A tibble: 352 × 27
+##    index avibase.id       species1_birdlife   species2_ebird ebird.species.group
+##    &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;               &lt;chr&gt;          &lt;chr&gt;              
+##  1   661 AVIBASE-DDF650D1 Acridotheres leuco… Acridotheres … Acridotheres burma…
+##  2   667 AVIBASE-8FEC2A63 Acridotheres terti… Acridotheres … Acridotheres melan…
+##  3   668 AVIBASE-2CE58BE1 Acridotheres trico… Acridotheres … Acridotheres melan…
+##  4   776 AVIBASE-C3251DE9 Acrocephalus longi… Acrocephalus … Acrocephalus longi…
+##  5  1104 AVIBASE-7ED19F0D Aegithalos annamen… Aegithalos co… Aegithalos concinn…
+##  6  1149 AVIBASE-3A1C959D Aegithalos iredalei Aegithalos co… Aegithalos concinn…
+##  7  1306 AVIBASE-31CA6790 Aerodramus nuditar… Aerodramus nu… Aerodramus nuditar…
+##  8  1417 AVIBASE-94135968 Arremon axillaris   Arremon tacit… Arremon taciturnus 
+##  9  1418 AVIBASE-3C217384 Aethopyga guimaras… Aethopyga gui… Aethopyga guimaras…
+## 10  1432 AVIBASE-A4D54F5C Aethopyga magnifica Aethopyga mag… Aethopyga magnifica
+## # ℹ 342 more rows
+## # ℹ 22 more variables: species3_birdtree &lt;chr&gt;, data.type &lt;fct&gt;, source &lt;chr&gt;,
+## #   specimen.number &lt;chr&gt;, sex &lt;chr&gt;, age &lt;fct&gt;, locality &lt;lgl&gt;,
+## #   country_wri &lt;chr&gt;, country &lt;lgl&gt;, beak.length_culmen &lt;dbl&gt;,
+## #   beak.length_nares &lt;dbl&gt;, beak.width &lt;dbl&gt;, beak.depth &lt;dbl&gt;,
+## #   tarsus.length &lt;dbl&gt;, wing.length &lt;dbl&gt;, kipps.distance &lt;dbl&gt;,
+## #   secondary1 &lt;dbl&gt;, `hand-wing.index` &lt;dbl&gt;, tail.length &lt;dbl&gt;, …</code></pre>
 </div>
 <div id="sanity-checks" class="section level1">
 <h1>Sanity checks</h1>
+<p>To check that the raw data is clean, we can use skim() from the skimr
+package.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">skim</span>(avonet_clean<span class="sc">$</span>raw_data)</span></code></pre></div>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">avonet_clean$raw_data</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">90019</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">24</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">11</td>
+</tr>
+<tr class="odd">
+<td align="left">factor</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">10</td>
+</tr>
+<tr class="odd">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="12%" />
+<col width="17%" />
+<col width="5%" />
+<col width="5%" />
+<col width="7%" />
+<col width="11%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">avibase.id</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">0</td>
+<td align="right">10899</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">species1_birdlife</td>
+<td align="right">337</td>
+<td align="right">1.00</td>
+<td align="right">9</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">10669</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">species2_ebird</td>
+<td align="right">383</td>
+<td align="right">1.00</td>
+<td align="right">9</td>
+<td align="right">33</td>
+<td align="right">0</td>
+<td align="right">10368</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">ebird.species.group</td>
+<td align="right">181</td>
+<td align="right">1.00</td>
+<td align="right">8</td>
+<td align="right">53</td>
+<td align="right">0</td>
+<td align="right">10888</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">species3_birdtree</td>
+<td align="right">56</td>
+<td align="right">1.00</td>
+<td align="right">9</td>
+<td align="right">33</td>
+<td align="right">0</td>
+<td align="right">9967</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">source</td>
+<td align="right">7</td>
+<td align="right">1.00</td>
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">80</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">specimen.number</td>
+<td align="right">16226</td>
+<td align="right">0.82</td>
+<td align="right">1</td>
+<td align="right">52</td>
+<td align="right">0</td>
+<td align="right">71859</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">sex</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">country_wri</td>
+<td align="right">12774</td>
+<td align="right">0.86</td>
+<td align="right">4</td>
+<td align="right">40</td>
+<td align="right">0</td>
+<td align="right">206</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">measurer</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">2</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">152</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">publication</td>
+<td align="right">86710</td>
+<td align="right">0.04</td>
+<td align="right">11</td>
+<td align="right">98</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="13%" />
+<col width="18%" />
+<col width="10%" />
+<col width="12%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="left">ordered</th>
+<th align="right">n_unique</th>
+<th align="left">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">data.type</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">2</td>
+<td align="left">1: 75842, 2: 14177</td>
+</tr>
+<tr class="even">
+<td align="left">age</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">2</td>
+<td align="left">0: 88750, 1: 1269</td>
+</tr>
+<tr class="odd">
+<td align="left">protocol</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">2</td>
+<td align="left">1: 51353, 0: 38666</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="14%" />
+<col width="7%" />
+<col width="6%" />
+<col width="5%" />
+<col width="6%" />
+<col width="6%" />
+<col width="7%" />
+<col width="8%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">beak.length_culmen</td>
+<td align="right">15797</td>
+<td align="right">0.82</td>
+<td align="right">25.33</td>
+<td align="right">22.38</td>
+<td align="right">3.80</td>
+<td align="right">14.39</td>
+<td align="right">19.30</td>
+<td align="right">27.60</td>
+<td align="right">455.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">beak.length_nares</td>
+<td align="right">34282</td>
+<td align="right">0.62</td>
+<td align="right">16.29</td>
+<td align="right">18.58</td>
+<td align="right">1.30</td>
+<td align="right">8.50</td>
+<td align="right">11.50</td>
+<td align="right">17.10</td>
+<td align="right">428.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">beak.width</td>
+<td align="right">19696</td>
+<td align="right">0.78</td>
+<td align="right">6.36</td>
+<td align="right">4.86</td>
+<td align="right">0.70</td>
+<td align="right">3.60</td>
+<td align="right">4.90</td>
+<td align="right">7.30</td>
+<td align="right">94.20</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">beak.depth</td>
+<td align="right">14655</td>
+<td align="right">0.84</td>
+<td align="right">7.43</td>
+<td align="right">6.90</td>
+<td align="right">0.70</td>
+<td align="right">3.70</td>
+<td align="right">5.40</td>
+<td align="right">8.50</td>
+<td align="right">132.80</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">tarsus.length</td>
+<td align="right">9503</td>
+<td align="right">0.89</td>
+<td align="right">26.91</td>
+<td align="right">20.97</td>
+<td align="right">1.90</td>
+<td align="right">17.30</td>
+<td align="right">21.60</td>
+<td align="right">29.10</td>
+<td align="right">490.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">wing.length</td>
+<td align="right">745</td>
+<td align="right">0.99</td>
+<td align="right">111.78</td>
+<td align="right">82.13</td>
+<td align="right">0.10</td>
+<td align="right">64.00</td>
+<td align="right">84.00</td>
+<td align="right">125.00</td>
+<td align="right">838.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">kipps.distance</td>
+<td align="right">27303</td>
+<td align="right">0.70</td>
+<td align="right">34.18</td>
+<td align="right">41.73</td>
+<td align="right">0.10</td>
+<td align="right">11.00</td>
+<td align="right">18.60</td>
+<td align="right">38.70</td>
+<td align="right">450.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">secondary1</td>
+<td align="right">25806</td>
+<td align="right">0.71</td>
+<td align="right">84.02</td>
+<td align="right">53.31</td>
+<td align="right">0.10</td>
+<td align="right">52.90</td>
+<td align="right">68.00</td>
+<td align="right">95.00</td>
+<td align="right">729.60</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">hand-wing.index</td>
+<td align="right">27336</td>
+<td align="right">0.70</td>
+<td align="right">24.92</td>
+<td align="right">14.30</td>
+<td align="right">0.05</td>
+<td align="right">15.20</td>
+<td align="right">20.88</td>
+<td align="right">30.32</td>
+<td align="right">95.93</td>
+<td align="left">▇▇▂▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">tail.length</td>
+<td align="right">6412</td>
+<td align="right">0.93</td>
+<td align="right">81.53</td>
+<td align="right">58.01</td>
+<td align="right">0.10</td>
+<td align="right">48.10</td>
+<td align="right">66.00</td>
+<td align="right">93.00</td>
+<td align="right">1415.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+<p>The data has one less than the expected number of continuous
+morphological traits (11), this may because the 11th trait is stored
+exclusively in the taxonomy specific species means tibbles.
+Alternatively, the number of traits may have been miscounted or a trait
+that is actually a factor miss attributed to this number. The data has
+the expected number of rows (19,019; from 19,020 individuals where one
+removed as unidentified species - this individual can be optionally
+included by instructing the clean argument in load_avonet()). The range
+across the numeric traits seems reasonable, given knowledge of variation
+between bird species.</p>
 </div>
 <div id="addressing-the-questionsaims" class="section level1">
 <h1>Addressing the questions/aims</h1>
+<p>Humdrum is an R package designed to interface with AvoNet and take
+the humdrum out of EDA. The package is dependent on the tidyverse
+package (built under 2.0.0) from which readxl must be manually loaded.
+The install_avonet() function automatically installs the database at the
+location of the users choosing. The load_avonet() function loads and
+tidies the AvoNet dataset in a relational format. The dataset is stored
+as a list of tibbles where each tibble is accessed using the dollarsign
+operator followed by the tibble name. Optional cleaning can be applied
+to the raw_data tibble via the clean argument which defaults to “none”.
+“gapspecies” will remove and relocate all species names that have no
+observations from the raw_data tibble to a new gapspecies tibble.
+“Unknown” will remove the single individual of unknown species; while
+this observation is still useful in detecting relationships between
+functional traits, a key feature of AvoNet is how it is able to
+integrate with other databases by using three different taxonomy
+classifications. “empty” will remove the locality and country variables
+which are currently embargoed while data is transcribed from handwritten
+museum labels. “all” can be specified to apply all cleaning without
+needing to individually specify. If any one cleaning decision is
+excluded, then each of the other cleaning options must be specified in
+the clean argument. Applying cleaning will write the avonet_exclude
+object to the global environment which will identify any observations
+excluded or removed from their original locations.</p>
+<p>The extract_avonet() function enables the user to extract specified
+functional trait and other variables from the raw_data tibble along with
+one of three taxonomy classification systems. While AvoNet itself
+already includes means of functional traits according to the three
+different taxonomy systems (stored in the birdlife, ebird, and birdtree
+tibbles), they do not allow for any investigation into the spread of the
+data. Note that extract calls the load_avonet() function as it relies on
+the structure of the data to operate and does not currently have a clean
+argument. summary_avonet() enables the dynamic application of such
+summary statistics to the output of the extract function. Furthermore,
+observations can be grouped and summarised according to taxonomy levels
+higher than species (e.g. family, order, genus). This function
+automatically outputs the data in a long, non-tidy format because it
+better enables a visual overview of multiple traits and multiple
+statistics applied to traits. Setting the tidy argument equal to true in
+the function will output the data in a wide, tidy format which better
+enables subsequent analysis.</p>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>

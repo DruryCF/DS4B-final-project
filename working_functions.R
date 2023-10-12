@@ -66,6 +66,68 @@ load_avonet <- function(clean = "none") {
     as.factor()
   avonet$raw_data$age <- avonet$raw_data$age %>% 
     as.factor()
+  avonet$raw_data$sex <- avonet$raw_data$sex %>% 
+    as.factor()
+  
+  ## birdlife
+  
+  avonet$birdlife$sequence <- avonet$birdlife$sequence %>% 
+    as.character()
+  avonet$birdlife$migration <- avonet$birdlife$migration %>% 
+    as.factor()
+  avonet$birdlife$habitat.density <- avonet$birdlife$habitat.density %>% 
+    as.factor()
+  avonet$birdlife$habitat <- avonet$birdlife$habitat %>% 
+    as.factor()
+  avonet$birdlife$trophic.level <- avonet$birdlife$trophic.level %>% 
+    as.factor()
+  avonet$birdlife$trophic.niche <- avonet$birdlife$trophic.niche %>% 
+    as.factor()
+  avonet$birdlife$primary.lifestyle <- avonet$birdlife$primary.lifestyle %>% 
+    as.factor()
+  avonet$birdlife$inference <- avonet$birdlife$inference %>% 
+    as.factor()
+  
+  ## ebird
+  
+  avonet$ebird$migration <- avonet$ebird$migration %>% 
+    as.factor()
+  avonet$ebird$habitat.density <- avonet$ebird$habitat.density %>% 
+    as.factor()
+  avonet$ebird$habitat <- avonet$ebird$habitat %>% 
+    as.factor()
+  avonet$ebird$trophic.level <- avonet$ebird$trophic.level %>% 
+    as.factor()
+  avonet$ebird$trophic.niche <- avonet$ebird$trophic.niche %>% 
+    as.factor()
+  avonet$ebird$primary.lifestyle <- avonet$ebird$primary.lifestyle %>% 
+    as.factor()
+  avonet$ebird$inference <- avonet$ebird$inference %>% 
+    as.factor()
+  
+  ## birdtree
+  
+  avonet$birdtree$migration <- avonet$birdtree$migration %>% 
+    as.factor()
+  avonet$birdtree$habitat.density <- avonet$birdtree$habitat.density %>% 
+    as.factor()
+  avonet$birdtree$habitat <- avonet$birdtree$habitat %>% 
+    as.factor()
+  avonet$birdtree$trophic.level <- avonet$birdtree$trophic.level %>% 
+    as.factor()
+  avonet$birdtree$trophic.niche <- avonet$birdtree$trophic.niche %>% 
+    as.factor()
+  avonet$birdtree$primary.lifestyle <- avonet$birdtree$primary.lifestyle %>% 
+    as.factor()
+  avonet$birdtree$inference <- avonet$birdtree$inference %>% 
+    as.factor()
+  avonet$birdtree$species.status <- avonet$birdtree$species.status %>% 
+    as.factor()
+  
+  ## pigot
+  
+  avonet$pigot$inference <- avonet$pigot$inference %>% 
+    as.factor()
   
   # Optional cleaning
   
@@ -131,7 +193,7 @@ load_avonet <- function(clean = "none") {
     # Override dirty data with clean
     
     avonet$raw_data <- avonet_clean$raw_data
-
+    
     # Write excluded observations to global environment
     avonet_exclude <<- avonet_exclude
     

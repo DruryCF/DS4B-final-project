@@ -20,7 +20,7 @@ library(GGally)
 source("working_functions.R")
 ```
 
-# Download raw data
+# Download Avonet
 
 ```{r}
 install_avonet(filename = "raw_data/AVONET Supplementary dataset 1.xlsx")
@@ -33,7 +33,7 @@ install_avonet(filename = "raw_data/AVONET Supplementary dataset 1.xlsx")
   
 avonet <- list()
 
-names <- c("metadata", "birdlife", "ebird", "birdtree", 5, "raw_data", "mass_sources", "data_sources", "measurers", 10, 11)
+names <- c("metadata", "birdlife", "ebird", "birdtree", "pigot" , "raw_data", "mass_sources", "data_sources", "measurers", "crosswalk_birdlife_ebird", "crosswalk_birdlife_birdtree")
   
 for (i in 1:11) {
 x <- setNames(list(suppressWarnings(read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = i, na = "NA"))), names[i])
@@ -48,13 +48,13 @@ colnames(avonet$metadata) <- tolower(colnames(avonet$metadata))
 colnames(avonet$birdlife) <- tolower(colnames(avonet$birdlife))
 colnames(avonet$ebird) <- tolower(colnames(avonet$ebird))
 colnames(avonet$birdtree) <- tolower(colnames(avonet$birdtree))
-colnames(avonet$`5`) <- tolower(colnames(avonet$`5`))
+colnames(avonet$pigot) <- tolower(colnames(avonet$pigot))
 colnames(avonet$raw_data) <- tolower(colnames(avonet$raw_data))
 colnames(avonet$mass_sources) <- tolower(colnames(avonet$mass_sources))
 colnames(avonet$data_sources) <- tolower(colnames(avonet$data_sources))
 colnames(avonet$measurers) <- tolower(colnames(avonet$measurers))
-colnames(avonet$`10`) <- tolower(colnames(avonet$`10`))
-colnames(avonet$`11`) <- tolower(colnames(avonet$`11`))
+colnames(avonet$crosswalk_birdlife_ebird) <- tolower(colnames(avonet$crosswalk_birdlife_ebird))
+colnames(avonet$crosswalk_birdlife_birdtree) <- tolower(colnames(avonet$crosswalk_birdlife_birdtree))
 
 # Make variable character values lowercase in metadata tibble -> method adapted from StackOverflow (https://stackoverflow.com/questions/50615116/renaming-character-variables-in-a-column-in-data-frame-r)
 
@@ -70,6 +70,8 @@ avonet$metadata$variable <- as.character(variable_lookup[avonet$metadata$variabl
 
 avonet$metadata <- avonet$metadata %>% 
   rename(variable.types = `variable types`)
+
+avonet
 ```
 
 # Sanity check raw_data
@@ -188,7 +190,7 @@ skim(avonet_clean$raw_data)
 
 ## Correcting variable class
 
-data.type is a factor variable where 1 = museum specimen, and 2 = live individual. Similarly, protocol is a factor variable where 0 = biometric measurements not taken using AVONET protocol, and 1 = biometric measurements taken using AVONET protocol. Age is also a factor where 0 = adult specimen and 1 = immature specimen.
+data.type is a factor variable where 1 = museum specimen, and 2 = live individual. Similarly, protocol is a factor variable where 0 = biometric measurements not taken using AVONET protocol, and 1 = biometric measurements taken using AVONET protocol. Age is also a factor where 0 = adult specimen and 1 = immature specimen. Finally, sex is a factor where M = male, F = female, U = unknown
 
 ```{r}
 avonet_clean$raw_data$data.type <- avonet_clean$raw_data$data.type %>%  
@@ -196,6 +198,8 @@ avonet_clean$raw_data$data.type <- avonet_clean$raw_data$data.type %>%
 avonet_clean$raw_data$protocol <- avonet_clean$raw_data$protocol %>% 
   as.factor()
 avonet_clean$raw_data$age <- avonet_clean$raw_data$age %>% 
+  as.factor()
+avonet_clean$raw_data$sex <- avonet_clean$raw_data$sex %>% 
   as.factor()
 ```
 
@@ -265,3 +269,110 @@ avonet_clean$raw_data <- avonet_clean$raw_data %>%
 
 avonet_clean
 ```
+
+# Sanity check birdlife, ebire, birdtree, and pigot
+
+```{r}
+skim(avonet$birdlife)
+skim(avonet$ebird)
+skim(avonet$birdtree)
+skim(avonet$pigot)
+```
+
+## Correcting variable class
+
+In birdlife, sequence is a species identifier and should therefore be a character, not numeric.
+
+Across birdlife, ebird, and birdtree:
+  + Migration is a factor: 1 = sedentary, 2 = partially migratory, 3 = migratory
+  + Habitat.density is a factor: 1 = dense habitats, 2 = semi-open habitats, 3 = open habitats
+  + Habitat, trophic.level, trophic.niche, primary.lifestyle, and inference are also all factors
+
+Birdtree additionally has species.status as a factor and, in pigot, only inference is a factor.
+
+```{r}
+## birdlife
+
+avonet_clean$birdlife <- avonet$birdlife
+
+avonet_clean$birdlife$sequence <- avonet_clean$birdlife$sequence %>% 
+  as.character()
+avonet_clean$birdlife$migration <- avonet_clean$birdlife$migration %>% 
+  as.factor()
+avonet_clean$birdlife$habitat.density <- avonet_clean$birdlife$habitat.density %>% 
+  as.factor()
+avonet_clean$birdlife$habitat <- avonet_clean$birdlife$habitat %>% 
+  as.factor()
+avonet_clean$birdlife$trophic.level <- avonet_clean$birdlife$trophic.level %>% 
+  as.factor()
+avonet_clean$birdlife$trophic.niche <- avonet_clean$birdlife$trophic.niche %>% 
+  as.factor()
+avonet_clean$birdlife$primary.lifestyle <- avonet_clean$birdlife$primary.lifestyle %>% 
+  as.factor()
+avonet_clean$birdlife$inference <- avonet_clean$birdlife$inference %>% 
+  as.factor()
+
+## ebird
+
+avonet_clean$ebird <- avonet$ebird
+
+avonet_clean$ebird$migration <- avonet_clean$ebird$migration %>% 
+  as.factor()
+avonet_clean$ebird$habitat.density <- avonet_clean$ebird$habitat.density %>% 
+  as.factor()
+avonet_clean$ebird$habitat <- avonet_clean$ebird$habitat %>% 
+  as.factor()
+avonet_clean$ebird$trophic.level <- avonet_clean$ebird$trophic.level %>% 
+  as.factor()
+avonet_clean$ebird$trophic.niche <- avonet_clean$ebird$trophic.niche %>% 
+  as.factor()
+avonet_clean$ebird$primary.lifestyle <- avonet_clean$ebird$primary.lifestyle %>% 
+  as.factor()
+avonet_clean$ebird$inference <- avonet_clean$ebird$inference %>% 
+  as.factor()
+
+## birdtree
+
+avonet_clean$birdtree <- avonet$birdtree
+
+avonet_clean$birdtree$migration <- avonet_clean$birdtree$migration %>% 
+  as.factor()
+avonet_clean$birdtree$habitat.density <- avonet_clean$birdtree$habitat.density %>% 
+  as.factor()
+avonet_clean$birdtree$habitat <- avonet_clean$birdtree$habitat %>% 
+  as.factor()
+avonet_clean$birdtree$trophic.level <- avonet_clean$birdtree$trophic.level %>% 
+  as.factor()
+avonet_clean$birdtree$trophic.niche <- avonet_clean$birdtree$trophic.niche %>% 
+  as.factor()
+avonet_clean$birdtree$primary.lifestyle <- avonet_clean$birdtree$primary.lifestyle %>% 
+  as.factor()
+avonet_clean$birdtree$inference <- avonet_clean$birdtree$inference %>% 
+  as.factor()
+avonet_clean$birdtree$species.status <- avonet_clean$birdtree$species.status %>% 
+  as.factor()
+
+## pigot
+
+avonet_clean$pigot <- avonet$pigot
+
+avonet_clean$pigot$inference <- avonet_clean$pigot$inference %>% 
+  as.factor()
+```
+
+```{r}
+skim(avonet_clean$birdlife)
+skim(avonet_clean$ebird)
+skim(avonet_clean$birdtree)
+skim(avonet_clean$pigot)
+```
+
+## Check mass
+
+```{r}
+avonet_clean$birdlife %>% 
+  select(contains(c("species")), mass) %>% 
+  arrange(desc(mass))
+```
+
+The two 111kg bird species are Ostriches. This is reasonable.

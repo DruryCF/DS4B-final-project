@@ -240,11 +240,12 @@ This function is in development. Currently, the function is able to retrieve the
 ```{r}
 extract_avonet <- function (taxon_system = "birdlife",
                             taxon_level = "species",
-                            traits = NULL) {
+                            traits = NULL,
+                            clean = "none") {
   
   t_c <- taxon_system
   t_l <- taxon_level
-  avonet <- load_avonet()
+  avonet <- load_avonet(clean = clean)
   data <- avonet$raw_data
   
   # Extract taxon systems
@@ -380,7 +381,10 @@ extract_avonet <- function (taxon_system = "birdlife",
 
 ```{r}
 extract <- extract_avonet(taxon_system = "birdlife", taxon_level = "family", traits = c(".length"))
+extract_clean <- extract_avonet(taxon_system = "birdlife", taxon_level = "family", traits = c(".length"), clean = "all")
+
 extract
+extract_clean
 ```
 
 # summarise function

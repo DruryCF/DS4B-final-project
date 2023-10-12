@@ -2179,16 +2179,17 @@ already includes means of functional traits according to the three
 different taxonomy systems (stored in the birdlife, ebird, and birdtree
 tibbles), they do not allow for any investigation into the spread of the
 data. Note that extract calls the load_avonet() function as it relies on
-the structure of the data to operate and does not currently have a clean
-argument. summary_avonet() enables the dynamic application of such
-summary statistics to the output of the extract function. Furthermore,
-observations can be grouped and summarised according to taxonomy levels
-higher than species (e.g. family, order, genus). This function
-automatically outputs the data in a long, non-tidy format because it
-better enables a visual overview of multiple traits and multiple
-statistics applied to traits. Setting the tidy argument equal to true in
-the function will output the data in a wide, tidy format which better
-enables subsequent analysis.</p>
+the structure of the data to operate, therefore any cleaning will need
+to be specified via the clean argument. summary_avonet() enables the
+dynamic application of such summary statistics to the output of the
+extract function. Furthermore, observations can be grouped and
+summarised according to taxonomy levels higher than species
+(e.g. family, order, genus). This function automatically outputs the
+data in a long, non-tidy format because it better enables a visual
+overview of multiple traits and multiple statistics applied to traits.
+Setting the tidy argument equal to true in the function will output the
+data in a wide, tidy format which better enables subsequent
+analysis.</p>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>

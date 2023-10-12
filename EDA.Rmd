@@ -387,9 +387,99 @@ extract
 extract_clean
 ```
 
+# extract set functional trait averages by from $birdlife, $ebird, $birdtree.
+
+This function selects defined variables from the species average tibbles. These contain geographic data.
+
+```{r}
+extract_average_avonet <- function (taxon_system = "birdlife",
+                                    traits = NULL) {
+  
+  t_c <- taxon_system
+  avonet <- load_avonet()
+  
+  if (taxon_system == "birdlife") {
+    
+    data <- avonet$birdlife
+    
+    # Extract genus from species
+    
+    data <- data %>% 
+      rowwise() %>% 
+      mutate(genus = strsplit(species1, " ")[[1]][1]) %>%  # Code written by ChatGPT to extract genus names from species
+      ungroup()
+      
+    # Rearrange column order
+  
+    data <- data %>% 
+      select(order1, family1, genus, species1, everything()) %>% 
+      rename(order = order1, family = family1, species = species1)
+    
+  }
+  
+  if (taxon_system == "ebird") {
+    
+    data <- avonet$birdlife
+    
+    # Extract genus from species
+    
+    data <- data %>%
+      rowwise() %>% 
+      mutate(genus = strsplit(species2, " ")[[1]][1]) %>%  # Code written by ChatGPT to extract genus names from species
+      ungroup()
+      
+    # Rearrange column order
+  
+    data <- data %>% 
+      select(order2, family2, genus, species2, everything()) %>% 
+      rename(order = order2, family = family2, species = species2)
+    
+  }
+  
+  if (taxon_system == "birdtree") {
+    
+    data <- avonet$birdtree
+    
+    # Extract genus from species
+    
+    data <- data %>% 
+      rowwise() %>% 
+      mutate(genus = strsplit(species3, " ")[[1]][1]) %>%  # Code written by ChatGPT to extract genus names from species
+      ungroup()
+      
+    # Rearrange column order
+  
+    data <- data %>% 
+      select(order3, family3, genus, species3, everything()) %>% 
+      rename(order = order3, family = family3, species = species3)
+    
+  }
+  
+  # Select traits
+  
+  if (!is.null(traits)) {
+    
+    data <- data %>% 
+      select(order, family, genus, species, contains(c(traits)))
+    
+  }
+  
+  # Return summary
+  
+  cat("\ntaxon system:", tolower(t_c))
+  return(data)
+  
+}
+```
+
+```{r}
+avg <- extract_average_avonet(traits = c("tail.length", "wing.length"))
+avg
+```
+
 # summarise function
 
-Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with extract_avonet(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels. By setting tidy = TRUE, the function will return summary stats in tidy format. Function will always return count data for each group. Note that count data returns the number of observations for that species, not the number of species with values for that trait.
+Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with extract_avonet() and extract_average_avonet(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels. By setting tidy = TRUE, the function will return summary stats in tidy format. Function will always return count data for each group. Note that count data returns the number of observations for that species, not the number of species with values for that trait.
 
 ```{r}
 summary_avonet <- function (data,
@@ -515,3 +605,9 @@ summary_tidy <- summary_avonet(data = extract, group = c("species"), stats = c("
 summary
 summary_tidy
 ```
+
+```{r}
+summary2 <- summary_avonet(data = avg, group = c("family"), stats = c("mean", "median", "max", "min", "sd"), tidy = FALSE)
+summary2
+```
+

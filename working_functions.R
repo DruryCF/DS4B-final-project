@@ -344,8 +344,85 @@ extract_avonet <- function (taxon_system = "birdlife",
     group_by(!!sym(t_l))
   
   # Return summary
+# extract data from species average tibbles
+
+extract_average_avonet <- function (taxon_system = "birdlife",
+                                    traits = NULL) {
   
   return(summary)
+  t_c <- taxon_system
+  avonet <- load_avonet()
+  
+  if (taxon_system == "birdlife") {
+    
+    data <- avonet$birdlife
+    
+    # Extract genus from species
+    
+    data <- data %>% 
+      rowwise() %>% 
+      mutate(genus = strsplit(species1, " ")[[1]][1]) %>%  # Code written by ChatGPT to extract genus names from species
+      ungroup()
+    
+    # Rearrange column order
+    
+    data <- data %>% 
+      select(order1, family1, genus, species1, everything()) %>% 
+      rename(order = order1, family = family1, species = species1)
+    
+  }
+  
+  if (taxon_system == "ebird") {
+    
+    data <- avonet$birdlife
+    
+    # Extract genus from species
+    
+    data <- data %>%
+      rowwise() %>% 
+      mutate(genus = strsplit(species2, " ")[[1]][1]) %>%  # Code written by ChatGPT to extract genus names from species
+      ungroup()
+    
+    # Rearrange column order
+    
+    data <- data %>% 
+      select(order2, family2, genus, species2, everything()) %>% 
+      rename(order = order2, family = family2, species = species2)
+    
+  }
+  
+  if (taxon_system == "birdtree") {
+    
+    data <- avonet$birdtree
+    
+    # Extract genus from species
+    
+    data <- data %>% 
+      rowwise() %>% 
+      mutate(genus = strsplit(species3, " ")[[1]][1]) %>%  # Code written by ChatGPT to extract genus names from species
+      ungroup()
+    
+    # Rearrange column order
+    
+    data <- data %>% 
+      select(order3, family3, genus, species3, everything()) %>% 
+      rename(order = order3, family = family3, species = species3)
+    
+  }
+  
+  # Select traits
+  
+  if (!is.null(traits)) {
+    
+    data <- data %>% 
+      select(order, family, genus, species, contains(c(traits)))
+    
+  }
+  
+  # Return data
+  
+  cat("\ntaxon system:", tolower(t_c))
+  return(data)
   
 }
 

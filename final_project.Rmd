@@ -17,7 +17,7 @@ output:
 
 # Word/figure count
 
-words: 1409
+words: 1426
 
 figures: 0
 
@@ -64,7 +64,7 @@ install_avonet(filename = "raw_data/AVONET Supplementary dataset 1.xlsx")
 
 # Data wrangling
 
-Humdrum's function load_avonet() automatically tidies and optionally cleans the AvoNet dataset. Currently, cleaning is limited to the raw_data tibble. The clean argument can variably clean some of the data based on defined criteria e.g. clean = "gapspecies" will remove and relocate all species with no observations from the raw_data tibble to a new gapspecies tibble. When cleaning is applied, the avonet_exclude object will be written to the global environment, detailing removed observations.
+Humdrum's function load_avonet() automatically tidies and optionally cleans the AvoNet dataset. Currently, cleaning is limited to the raw_data tibble as the birdtree, ebird, birdlife, and pigot tibbles were determined to not require cleaning. The clean argument can variably clean some of the data based on defined criteria e.g. clean = "gapspecies" will remove and relocate all species with no observations from the raw_data tibble to a new gapspecies tibble. When cleaning is applied, the avonet_exclude object will be written to the global environment, detailing removed observations.
 
 ```{r}
 avonet_tidy <- load_avonet()

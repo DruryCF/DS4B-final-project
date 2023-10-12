@@ -233,18 +233,16 @@ avonet <- load_avonet(clean = "all")
 avonet
 ```
 
-# extract set functional traits and return summary statistics for set taxon level by set taxon system
+# extract set functional traits by set taxon system from $raw_data
 
-This function is in development. Currently, the function is able to retrieve the set taxon system through the 'taxon_system' argument and add this data to the raw dataset of AvoNet. It can also dynamically group observations by species, genus, family, or order. Through the 'traits' argument, users can specify which traits they would like to extract, if unspecified all variables will remain available.
+Function is able to retrieve the set taxon system through the 'taxon_system' argument and add this data to the raw dataset of AvoNet. Through the 'traits' argument, users can specify which traits they would like to extract, if unspecified all variables will remain available. Extract calls the load_avonet() function enabling users to bypass loading the entire database. The clean argument also passes to load_avonet() enabling dynamic cleaning.
 
 ```{r}
 extract_avonet <- function (taxon_system = "birdlife",
-                            taxon_level = "species",
                             traits = NULL,
                             clean = "none") {
   
   t_c <- taxon_system
-  t_l <- taxon_level
   avonet <- load_avonet(clean = clean)
   data <- avonet$raw_data
   
@@ -367,14 +365,9 @@ extract_avonet <- function (taxon_system = "birdlife",
     
   }
   
-  # group data by taxon level
+  # Return data
   
-  summary <- data %>% 
-    group_by(!!sym(t_l))
-  
-  # Return summary
-  
-  return(summary)
+  return(data)
 
 }
 ```

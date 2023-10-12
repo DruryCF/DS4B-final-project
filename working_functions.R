@@ -207,15 +207,13 @@ load_avonet <- function(clean = "none") {
 
 
 
-# extract data
+# extract data from raw_data
 
 extract_avonet <- function (taxon_system = "birdlife",
-                            taxon_level = "species",
                             traits = NULL,
                             clean = "none") {
   
   t_c <- taxon_system
-  t_l <- taxon_level
   avonet <- load_avonet(clean = clean)
   data <- avonet$raw_data
   
@@ -338,18 +336,19 @@ extract_avonet <- function (taxon_system = "birdlife",
     
   }
   
-  # group data by taxon level
+  # Return data
   
-  summary <- data %>% 
-    group_by(!!sym(t_l))
+  return(data)
   
-  # Return summary
+}
+
+
+
 # extract data from species average tibbles
 
 extract_average_avonet <- function (taxon_system = "birdlife",
                                     traits = NULL) {
   
-  return(summary)
   t_c <- taxon_system
   avonet <- load_avonet()
   

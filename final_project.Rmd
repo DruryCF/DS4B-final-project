@@ -17,7 +17,7 @@ output:
 
 # Word/figure count
 
-words: 1426
+words: 2018
 
 figures: 0
 
@@ -47,9 +47,9 @@ AvoNet is stored across 11 related excel spreadsheets making it difficult to exp
 
 The raw data is obtainable from: https://figshare.com/ndownloader/files/34480856?private_link=b990722d72a26b5bfead
 
-which was linked in the original AvoNet paper (Tobias et al., 2022).
+which was linked in the original AvoNet paper as 'AVONET Supplementary dataset 1' (Tobias et al., 2022).
 
-Humdrum has a function, install_avonet(), to accomplish this for the user.
+Humdrum has a function, install_avonet(), to accomplish this for the user. install_avonet() only takes one argument, the file destination of the downloaded file (filename).
 
 ```{r}
 library(tidyverse, quietly = TRUE)
@@ -61,10 +61,11 @@ source("working_functions.R")
 ```{r}
 install_avonet(filename = "raw_data/AVONET Supplementary dataset 1.xlsx")
 ```
+Should additional versions of AvoNet be released in the future and older versions remain available via separate link, a version argument may be added to install_avonet().
 
 # Data wrangling
 
-Humdrum's function load_avonet() automatically tidies and optionally cleans the AvoNet dataset. Currently, cleaning is limited to the raw_data tibble as the birdtree, ebird, birdlife, and pigot tibbles were determined to not require cleaning. The clean argument can variably clean some of the data based on defined criteria e.g. clean = "gapspecies" will remove and relocate all species with no observations from the raw_data tibble to a new gapspecies tibble. When cleaning is applied, the avonet_exclude object will be written to the global environment, detailing removed observations.
+Humdrum's function load_avonet() automatically tidies and optionally cleans the AvoNet dataset. Currently, cleaning is limited to the raw_data tibble as the birdtree, ebird, and birdlife tibbles were determined to not require cleaning (for details see processed_data/data_cleaning.Rmd). The clean argument can variably clean some of the data based on defined criteria (e.g. clean = "gapspecies" will remove and relocate all species with no observations from the raw_data tibble to a new gapspecies tibble). When cleaning is applied, the avonet_exclude object will be written to the global environment, detailing removed observations.
 
 ```{r}
 avonet_tidy <- load_avonet()
@@ -76,6 +77,57 @@ avonet_clean$gapspecies
 avonet_exclude$raw_data
 ```
 
+load_avonet() uses read_xlxs() from the readxl package (under the tidyverse package v2.0.0) to read each excel sheet in the AvoNet dataset. It uses the colnames() and tolower() functions to make all variable names lowercase to increase consistency and ease of use. It also corrects variable class where necessary (usually numeric or character to factor). For example:
+
+```{r}
+raw_data <- read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = "AVONET_Raw_Data", na = "NA")
+
+# Add row index variable; This is not included in load_avonet() but is used to subtract excluded observations from tidied_data_*.csv. 
+
+raw_data <- raw_data %>%
+  mutate(row_index = row_number(),
+         .before = 0)
+
+# Make variables lowercase across tibbles
+
+colnames(raw_data) <- tolower(colnames(raw_data))
+
+# correct variable class
+
+raw_data$data.type <- raw_data$data.type %>%  
+  as.factor()
+
+raw_data$protocol <- raw_data$protocol %>% 
+  as.factor()
+
+raw_data$age <- raw_data$age %>% 
+  as.factor()
+
+raw_data$sex <- raw_data$sex %>% 
+  as.factor()
+
+# write .csv
+
+write.csv(raw_data, file = "processed_data/tidied_data_raw_data.csv")
+```
+
+This tidied version of the raw_data tibble in AvoNet can be found as a separate .csv in /processed_data along with the tided versions of the birdlife, ebird, and birdtree, tibbles. The code behind these files can be found in data_cleaning.Rmd.
+
+While load_avonet() can optionally clean the data, the excluded_data_raw_data.csv found in /processed data and produced in data_cleaning.Rmd can also be used to remove the relevant observations from tidied_data_raw_data.csv. Note that this will not remove the locality and country variables which are removed in load_avonet by setting clean to "empty" or "all" as the data for these variables is currently embargoed.
+
+```{r}
+raw_data_tidy <- read_csv("processed_data/tidied_data_raw_data.csv")
+raw_data_exclude <- read_csv("processed_data/excluded_data_raw_data.csv")
+
+raw_data_clean <- raw_data_tidy %>% 
+  filter(!(row_index %in% raw_data_exclude$row_index))
+
+write.csv(raw_data_clean, file = "processed_data/cleaned_data_raw_data.csv")
+
+raw_data_clean
+raw_data_exclude
+```
+
 # Sanity checks
 
 To check that the raw data is clean, we can use skim() from the skimr package.
@@ -84,13 +136,13 @@ To check that the raw data is clean, we can use skim() from the skimr package.
 skim(avonet_clean$raw_data)
 ```
 
-The data has one less than the expected number of continuous morphological traits (11), this may because the 11th trait is stored exclusively in the taxonomy specific species means tibbles. Alternatively, the number of traits may have been miscounted or a trait that is actually a factor miss attributed to this number. The data has the expected number of rows (19,019; from 19,020 individuals where one removed as unidentified species - this individual can be optionally included by instructing the clean argument in load_avonet()). The range across the numeric traits seems reasonable, given knowledge of variation between bird species.
+The data has the expected number of continuous morphological traits (10), the 11th morphological trait, mass, is stored exclusively in the taxonomy specific species means tibbles (i.e. birdlife, ebird, birdtree) as the trait was extracted from literature for each species and not measured for individuals. The data has the expected number of rows (19,019; from 19,020 individuals where one removed as unidentified species - this individual can be optionally included by instructing the clean argument in load_avonet()). The range across the numeric traits seems reasonable, given knowledge of variation between bird species.
 
 # Addressing the questions/aims
 
 Humdrum is an R package designed to interface with AvoNet and take the humdrum out of EDA. The package is dependent on the tidyverse package (built under 2.0.0) from which readxl must be manually loaded. The install_avonet() function automatically installs the database at the location of the users choosing. The load_avonet() function loads and tidies the AvoNet dataset in a relational format. The dataset is stored as a list of tibbles where each tibble is accessed using the dollarsign operator followed by the tibble name. Optional cleaning can be applied to the raw_data tibble via the clean argument which defaults to "none". "gapspecies" will remove and relocate all species names that have no observations from the raw_data tibble to a new gapspecies tibble. "Unknown" will remove the single individual of unknown species; while this observation is still useful in detecting relationships between functional traits, a key feature of AvoNet is how it is able to integrate with other databases by using three different taxonomy classifications. "empty" will remove the locality and country variables which are currently embargoed while data is transcribed from handwritten museum labels. "all" can be specified to apply all cleaning without needing to individually specify. If any one cleaning decision is excluded, then each of the other cleaning options must be specified in the clean argument. Applying cleaning will write the avonet_exclude object to the global environment which will identify any observations excluded or removed from their original locations.
 
-The extract_avonet() function enables the user to extract specified functional trait and other variables from the raw_data tibble along with one of three taxonomy classification systems. While AvoNet itself already includes means of functional traits according to the three different taxonomy systems (stored in the birdlife, ebird, and birdtree tibbles), they do not allow for any investigation into the spread of the data. Note that extract calls the load_avonet() function as it relies on the structure of the data to operate, therefore any cleaning will need to be specified via the clean argument. extract_average_avonet() accesses the species average tibbles originally in AvoNet. This function extracts genus from species, outputs specified traits, and renames variables to facillitate summary_avonet(). summary_avonet() enables the dynamic application of such summary statistics to the output of either extract function. Furthermore, observations can be grouped and summarised according to taxonomy levels higher than species (e.g. family, order, genus). This function automatically outputs the data in a long, non-tidy format because it better enables a visual overview of multiple traits and multiple statistics applied to traits. Setting the tidy argument equal to true in the function will output the data in a wide, tidy format which better enables subsequent analysis.
+The extract_avonet() function enables the user to extract specified functional trait and other variables from the raw_data tibble along with one of three taxonomy classification systems. While AvoNet itself already includes means of functional traits according to the three different taxonomy systems (stored in the birdlife, ebird, and birdtree tibbles), they do not allow for any investigation into the spread of the data. Note that extract calls the load_avonet() function as it relies on the structure of the data to operate, therefore any cleaning will need to be specified via the clean argument. extract_average_avonet() accesses the species average tibbles originally in AvoNet. This function extracts genus from species, outputs specified traits, and renames variables to facilitate summary_avonet(). summary_avonet() enables the dynamic application of such summary statistics to the output of either extract function. Furthermore, observations can be grouped and summarised according to taxonomy levels higher than species (e.g. family, order, genus). This function automatically outputs the data in a long, non-tidy format because it better enables a visual overview of multiple traits and multiple statistics applied to traits. Setting the tidy argument equal to true in the function will output the data in a wide, tidy format which better enables subsequent analysis.
 
 # References
 

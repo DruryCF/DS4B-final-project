@@ -35,7 +35,7 @@ avonet <- list()
 
 names <- c("metadata", "birdlife", "ebird", "birdtree", "pigot" , "raw_data", "mass_sources", "data_sources", "measurers", "crosswalk_birdlife_ebird", "crosswalk_birdlife_birdtree")
   
-for (i in 1:11) {
+for (<- in 1:11) {
 x <- setNames(list(suppressWarnings(read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = i, na = "NA"))), names[i])
 avonet <- append(avonet, x)
 }
@@ -214,7 +214,7 @@ We now have two variables of class factor and, subtracting index, we now have 10
 ```{r}
 # Extract numeric functional traits
 
-avonet_raw_numeric <- extract_avonet(taxon_system = "birdlife", taxon_level = "species", traits = c("beak.", ".length", "kipps", "secondary", "hand"))
+avonet_raw_numeric <- extract_avonet(taxon_system = "birdlife", traits = c("beak.", ".length", "kipps", "secondary", "hand"))
 avonet_raw_numeric
 ```
 
@@ -376,3 +376,217 @@ avonet_clean$birdlife %>%
 ```
 
 The two 111kg bird species are Ostriches. This is reasonable.
+
+# Write tidied_data.csv files
+
+## raw_data
+
+```{r}
+raw_data <- read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = "AVONET_Raw_Data", na = "NA")
+
+# Add row index variable
+
+raw_data <- raw_data %>%
+  mutate(row_index = row_number(),
+         .before = 0)
+
+# Make variables lowercase across tibbles
+
+colnames(raw_data) <- tolower(colnames(raw_data))
+
+# correct variable class
+
+raw_data$data.type <- raw_data$data.type %>%  
+  as.factor()
+
+raw_data$protocol <- raw_data$protocol %>% 
+  as.factor()
+
+raw_data$age <- raw_data$age %>% 
+  as.factor()
+
+raw_data$sex <- raw_data$sex %>% 
+  as.factor()
+
+# write .csv
+
+write.csv(raw_data, file = "processed_data/tidied_data_raw_data.csv")
+```
+
+```{r}
+read_csv("processed_data/tidied_data_raw_data.csv")
+```
+
+
+## birdlife
+
+```{r}
+birdlife <- read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = "AVONET1_BirdLife", na = "NA")
+
+# Add row index variable
+
+birdlife <- birdlife %>%
+  mutate(row_index = row_number(),
+         .before = 0)
+
+# Make variables lowercase across tibbles
+
+colnames(birdlife) <- tolower(colnames(birdlife))
+
+# Correct variable class
+
+birdlife$sequence <- birdlife$sequence %>% 
+  as.character()
+
+birdlife$migration <- birdlife$migration %>% 
+  as.factor()
+
+birdlife$habitat.density <- birdlife$habitat.density %>% 
+  as.factor()
+
+birdlife$habitat <- birdlife$habitat %>% 
+  as.factor()
+
+birdlife$trophic.level <- birdlife$trophic.level %>% 
+  as.factor()
+
+birdlife$trophic.niche <- birdlife$trophic.niche %>% 
+  as.factor()
+
+birdlife$primary.lifestyle <- birdlife$primary.lifestyle %>% 
+  as.factor()
+
+birdlife$inference <- birdlife$inference %>% 
+  as.factor()
+
+# write .csv
+
+write.csv(birdlife, file = "processed_data/tidied_data_birdlife.csv")
+```
+
+```{r}
+read_csv("processed_data/tidied_data_birdlife.csv")
+```
+
+## ebird
+
+```{r}
+ebird <- read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = "AVONET2_eBird", na = "NA")
+
+# Add row index variable
+
+ebird <- ebird %>%
+  mutate(row_index = row_number(),
+         .before = 0)
+
+# Make variables lowercase across tibbles
+
+colnames(ebird) <- tolower(colnames(ebird))
+
+# Correct variable class
+
+ebird$migration <- ebird$migration %>% 
+  as.factor()
+
+ebird$habitat.density <- ebird$habitat.density %>% 
+  as.factor()
+
+ebird$habitat <- ebird$habitat %>% 
+  as.factor()
+
+ebird$trophic.level <- ebird$trophic.level %>% 
+  as.factor()
+
+ebird$trophic.niche <- ebird$trophic.niche %>% 
+  as.factor()
+
+ebird$primary.lifestyle <- ebird$primary.lifestyle %>% 
+  as.factor()
+
+ebird$inference <- ebird$inference %>% 
+  as.factor()
+
+# write .csv
+
+write.csv(ebird, file = "processed_data/tidied_data_ebird.csv")
+```
+
+```{r}
+read_csv("processed_data/tidied_data_ebird.csv")
+```
+
+## birdtree
+
+```{r}
+birdtree <- read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = "AVONET3_BirdTree", na = "NA")
+
+# Add row index variable
+
+birdtree <- birdtree %>%
+  mutate(row_index = row_number(),
+         .before = 0)
+
+# Make variables lowercase across tibbles
+
+colnames(birdtree) <- tolower(colnames(birdtree))
+
+# Correct variable class
+
+birdtree$migration <- birdtree$migration %>% 
+  as.factor()
+
+birdtree$habitat.density <- birdtree$habitat.density %>% 
+  as.factor()
+
+birdtree$habitat <- birdtree$habitat %>% 
+  as.factor()
+
+birdtree$trophic.level <- birdtree$trophic.level %>% 
+  as.factor()
+
+birdtree$trophic.niche <- birdtree$trophic.niche %>% 
+  as.factor()
+
+birdtree$primary.lifestyle <- birdtree$primary.lifestyle %>% 
+  as.factor()
+
+birdtree$inference <- birdtree$inference %>% 
+  as.factor()
+
+birdtree$species.status <- birdtree$species.status %>% 
+  as.factor()
+
+# write .csv
+
+write.csv(birdtree, file = "processed_data/tidied_data_birdtree.csv")
+```
+
+```{r}
+read_csv("processed_data/tidied_data_birdtree.csv")
+```
+
+# Write excluded_data.csv file
+
+```{r}
+# Add reasoning behind exlusion and date of exclusion
+
+excluded_data <- avonet_exclude$raw_data %>% 
+  mutate(
+    exclusion_notes = case_when(
+      measurer == "GAPSPECIES" ~ "species has no observations in AvoNet; it is a gapspecies. Setting clean to 'gapspecies' or 'all' in load or extract functions will remove these from raw_data and place them in their own gapspecies tibble.",
+      is.na(avibase.id) ~ "species identity is unknown. While this observation may be useful for exploring relationships between traits, it does not contribute to the values of any taxa. A key feature of AvoNet is its taxonomy systems, therefore this observation was removed. Setting clean to 'unknown' or 'all' in load or extract functions will remove this observation from raw_data"),
+    exclusion_date = "11/Oct/2023") %>% 
+  select(index, exclusion_notes, exclusion_date) %>% 
+  rename(row_index = index)
+
+write.csv(excluded_data, file = "processed_data/excluded_data_raw_data.csv")
+```
+
+```{r}
+read_csv("processed_data/excluded_data_raw_data.csv")
+```
+
+
+
+
+

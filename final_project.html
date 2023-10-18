@@ -1580,7 +1580,7 @@ Exploratory Data Analysis using the AvoNet dataset</h3>
 
 <div id="wordfigure-count" class="section level1">
 <h1>Word/figure count</h1>
-<p>words: 1997</p>
+<p>words: 1999</p>
 <p>figures: 0</p>
 </div>
 <div id="location-on-github" class="section level1">
@@ -2377,9 +2377,9 @@ as in Reid and colleagues original work.</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>reid_variables <span class="ot">&lt;-</span> reid_variables <span class="sc">%&gt;%</span></span>
 <span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">species =</span> species,</span>
 <span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>         <span class="at">FM =</span> <span class="fu">case_when</span>(FM_raw <span class="sc">&lt;</span> <span class="fl">0.01</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>                        FM_raw <span class="sc">&gt;=</span> <span class="fl">0.01</span> <span class="sc">|</span> FM_raw <span class="sc">&lt;</span> <span class="fl">0.02</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
-<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a>                        FM_raw <span class="sc">&gt;=</span> <span class="fl">0.02</span> <span class="sc">|</span> FM_raw <span class="sc">&lt;</span> <span class="fl">0.03</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
-<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a>                        FM_raw <span class="sc">&gt;=</span> <span class="fl">0.03</span> <span class="sc">|</span> FM_raw <span class="sc">&lt;</span> <span class="fl">0.04</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>                        FM_raw <span class="sc">&gt;=</span> <span class="fl">0.01</span> <span class="sc">&amp;</span> FM_raw <span class="sc">&lt;</span> <span class="fl">0.02</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a>                        FM_raw <span class="sc">&gt;=</span> <span class="fl">0.02</span> <span class="sc">&amp;</span> FM_raw <span class="sc">&lt;</span> <span class="fl">0.03</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a>                        FM_raw <span class="sc">&gt;=</span> <span class="fl">0.03</span> <span class="sc">&amp;</span> FM_raw <span class="sc">&lt;</span> <span class="fl">0.04</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
 <span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a>                        FM_raw <span class="sc">&gt;</span> <span class="fl">0.04</span> <span class="sc">~</span> <span class="dv">5</span>),</span>
 <span id="cb32-8"><a href="#cb32-8" tabindex="-1"></a>         <span class="at">.keep =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb32-9"><a href="#cb32-9" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(FM))</span>
@@ -2388,22 +2388,23 @@ as in Reid and colleagues original work.</p>
 <pre><code>## # A tibble: 11,009 × 2
 ##    species                   FM
 ##    &lt;chr&gt;                  &lt;dbl&gt;
-##  1 Accipiter cooperii         2
-##  2 Accipiter gentilis         2
-##  3 Accipiter gundlachi        2
-##  4 Accipiter henstii          2
-##  5 Accipiter hiogaster        2
-##  6 Accipiter melanoleucus     2
-##  7 Accipiter meyerianus       2
-##  8 Accipiter sylvestris       2
-##  9 Aegypius monachus          2
-## 10 Aquila adalberti           2
+##  1 Anas aucklandica           5
+##  2 Anas eatoni                5
+##  3 Anas nesiotis              5
+##  4 Asarcornis scutulata       5
+##  5 Aythya affinis             5
+##  6 Aythya americana           5
+##  7 Aythya marila              5
+##  8 Aythya novaeseelandiae     5
+##  9 Aythya valisineria         5
+## 10 Biziura lobata             5
 ## # ℹ 10,999 more rows</code></pre>
-<p>Notably, these values do not match those produced by Reid and
-colleagues, highlighting the reproducibility issue.</p>
-<p>AvoNet’s interspecies tibbles (i.e. birdlife, ebird, and birdtree)
+<p>Although some methodology was assumed, these values appear to match
+Reid and colleagues’, highlighting how Humdrum could aid in
+reproducibility.</p>
+<p>AvoNet’s interspecies tibbles (i.e. birdlife, ebird, birdtree)
 provide the means of species for AvoNet’s functional traits including
-those only available at the species level such as geographic information
+those only available at species level such as geographic information
 (and mass as it was extracted from literature). This means that no
 intraspecies variation is included in this data, unlike the raw_data
 tibble. Furthermore, the interspecies tibbles record observations as sex

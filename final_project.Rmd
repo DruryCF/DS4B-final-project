@@ -17,7 +17,7 @@ output:
 
 # Word/figure count
 
-words: 1997
+words: 1999
 
 figures: 0
 
@@ -180,9 +180,9 @@ Again with mutate(), the index can be reformatted as a scale of 1-5 as in Reid a
 reid_variables <- reid_variables %>%
   mutate(species = species,
          FM = case_when(FM_raw < 0.01 ~ 1,
-                        FM_raw >= 0.01 | FM_raw < 0.02 ~ 2,
-                        FM_raw >= 0.02 | FM_raw < 0.03 ~ 3,
-                        FM_raw >= 0.03 | FM_raw < 0.04 ~ 4,
+                        FM_raw >= 0.01 & FM_raw < 0.02 ~ 2,
+                        FM_raw >= 0.02 & FM_raw < 0.03 ~ 3,
+                        FM_raw >= 0.03 & FM_raw < 0.04 ~ 4,
                         FM_raw > 0.04 ~ 5),
          .keep = "none") %>% 
   arrange(desc(FM))
@@ -190,9 +190,9 @@ reid_variables <- reid_variables %>%
 reid_variables
 ```
 
-Notably, these values do not match those produced by Reid and colleagues, highlighting the reproducibility issue.
+Although some methodology was assumed, these values appear to match Reid and colleagues', highlighting how Humdrum could aid in reproducibility.
 
-AvoNet's interspecies tibbles (i.e. birdlife, ebird, and birdtree) provide the means of species for AvoNet's functional traits including those only available at the species level such as geographic information (and mass as it was extracted from literature). This means that no intraspecies variation is included in this data, unlike the raw_data tibble. Furthermore, the interspecies tibbles record observations as sex general meaning any sex specific information and variation is lost. Humdrum's avonet_extract_intraspecies() function enables extraction of traits (and other variables) from the raw_data tibble of AvoNet. Furthermore, it applies the specified taxonomy classification system to the data. This enables exploration and use of what intraspecies variation is available in AvoNet including in analysis between higher taxonomic levels.
+AvoNet's interspecies tibbles (i.e. birdlife, ebird, birdtree) provide the means of species for AvoNet's functional traits including those only available at species level such as geographic information (and mass as it was extracted from literature). This means that no intraspecies variation is included in this data, unlike the raw_data tibble. Furthermore, the interspecies tibbles record observations as sex general meaning any sex specific information and variation is lost. Humdrum's avonet_extract_intraspecies() function enables extraction of traits (and other variables) from the raw_data tibble of AvoNet. Furthermore, it applies the specified taxonomy classification system to the data. This enables exploration and use of what intraspecies variation is available in AvoNet including in analysis between higher taxonomic levels.
 
 ```{r}
 intraspecies <- avonet_extract_intraspecies(filename = "raw_data/avonet_dataset.xlsx",

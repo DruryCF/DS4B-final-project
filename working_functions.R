@@ -584,7 +584,7 @@ avonet_summary <- function (data,
     }
   } 
   
-  message("If present, NA values are included in count")
+  message("\nIf present, NA values are included in count")
   
   return(summary)
   

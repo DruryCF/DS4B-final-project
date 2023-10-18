@@ -518,15 +518,18 @@ avonet_summary <- function (data,
       
       summary <- get(stat_name, envir = environment())  # envir = environment() was written by ChatGPT to access the local function environment in which stat_name is stored
       
+      stat_values_index <- length(group) + 2      
+      
       for (i in 2:length(stats)) {
         
         stat_name <- paste(stats[i], "_x", sep = "")
         
         stat_function_name <- stats[i]
         
-        stat_values <- get(stat_name, envir = environment())[[3]]
+        stat_values <- get(stat_name, envir = environment())[[stat_values_index]]
         
         summary <- summary %>% 
+          ungroup() %>% 
           mutate(!!stat_function_name := stat_values)
         
       }
@@ -565,6 +568,8 @@ avonet_summary <- function (data,
     
     if (tidy == TRUE) {
       
+      count_values_index <- length(group) + 1
+      
       summary <- extract %>% 
         summarise_at(traits_numeric, stats, na.rm = T)
       
@@ -572,8 +577,9 @@ avonet_summary <- function (data,
         summarise(n())
       
       summary <- summary %>% 
-        mutate(count = count[[2]],
-               .after = 1)
+        ungroup() %>% 
+        mutate(count = count[[count_values_index]],
+               .after = length(group))
       
     }
   } 

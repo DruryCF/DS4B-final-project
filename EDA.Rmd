@@ -521,12 +521,12 @@ avonet_summary <- function (data,
                             group = c("species"),
                             stats = c("mean"),
                             tidy = FALSE
-                            ) {
+) {
   
   extract <- data %>% 
     ungroup() %>% 
     group_by(across(all_of(group)))
-
+  
   traits <- extract %>% 
     ungroup() %>% 
     names()
@@ -545,18 +545,18 @@ avonet_summary <- function (data,
   }
   
   if (tidy == FALSE) {
-  
+    
     for(i in 1:length(stats)) {
-    
-    stat <- extract %>% 
-      summarise_at(traits_numeric, c(get(stats[i])), na.rm = T) %>% 
-      pivot_longer(cols = traits_numeric,
-                   names_to = "trait",
-                   values_to = all_of(stats[i]))
-    
-    stat_name <- paste(stats[i], "_x", sep = "")
-    
-    assign(stat_name, stat)
+      
+      stat <- extract %>% 
+        summarise_at(all_of(traits_numeric), c(get(stats[i])), na.rm = T) %>% 
+        pivot_longer(cols = traits_numeric,
+                     names_to = "trait",
+                     values_to = all_of(stats[i]))
+      
+      stat_name <- paste(stats[i], "_x", sep = "")
+      
+      assign(stat_name, stat)
     }
     
     if (length(stats) > 1) {
@@ -564,38 +564,41 @@ avonet_summary <- function (data,
       stat_name <- paste(stats[1], "_x", sep = "")
       
       summary <- get(stat_name, envir = environment())  # envir = environment() was written by ChatGPT to access the local function environment in which stat_name is stored
-    
+      
+      stat_values_index <- length(group) + 2      
+      
       for (i in 2:length(stats)) {
         
         stat_name <- paste(stats[i], "_x", sep = "")
         
         stat_function_name <- stats[i]
         
-        stat_values <- get(stat_name, envir = environment())[[3]]
+        stat_values <- get(stat_name, envir = environment())[[stat_values_index]]
         
         summary <- summary %>% 
+          ungroup() %>% 
           mutate(!!stat_function_name := stat_values)
         
       }
       
     } else {
       
-        stat_name <- paste(stats[1], "_x", sep = "")
-        
-        summary <- get(stat_name, envir = environment())
+      stat_name <- paste(stats[1], "_x", sep = "")
       
-      }
+      summary <- get(stat_name, envir = environment())
+      
+    }
     
     # Add count data
     
     count <- extract %>% 
-        summarise(count = n())
+      summarise(count = n())
     
     name <- group[length(group)]
     
     count <- count %>% 
       rename(var = name)
-
+    
     group_lookup <- setNames(c(count$count), c(count$var))
     
     summary <- summary %>% 
@@ -610,20 +613,23 @@ avonet_summary <- function (data,
     
   } else {
     
-      if (tidy == TRUE) {
-    
-        summary <- extract %>% 
-          summarise_at(traits_numeric, stats, na.rm = T)
-        
-        count <- extract %>% 
-          summarise(n())
-        
-        summary <- summary %>% 
-          mutate(count = count[[2]],
-                 .after = 1)
-        
-      }
-   } 
+    if (tidy == TRUE) {
+      
+      count_values_index <- length(group) + 1
+      
+      summary <- extract %>% 
+        summarise_at(traits_numeric, stats, na.rm = T)
+      
+      count <- extract %>% 
+        summarise(n())
+      
+      summary <- summary %>% 
+        ungroup() %>% 
+        mutate(count = count[[count_values_index]],
+               .after = length(group))
+      
+    }
+  } 
   
   message("If present, NA values are included in count")
   
@@ -648,7 +654,10 @@ summary2
 Function can group by multiple levels enabling partitioning of species averages by sex.
 
 ```{r}
-summary3 <- avonet_summary(data = extract, group = c("species", "sex"), stats = c("mean"), tidy = FALSE)
+summary3 <- avonet_summary(data = extract, group = c("species", "sex"), stats = c("mean", "sd"), tidy = FALSE)
+summary4 <- avonet_summary(data = extract, group = c("species", "sex"), stats = c("mean", "sd"), tidy = TRUE)
+
 summary3
+summary4
 ```
 

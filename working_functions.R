@@ -502,10 +502,10 @@ avonet_summary <- function (data,
     for(i in 1:length(stats)) {
       
       stat <- extract %>% 
-        summarise_at(all_of(traits_numeric), c(get(stats[i])), na.rm = T) %>% 
+        summarise_at(traits_numeric, c(get(stats[i])), na.rm = T) %>% 
         pivot_longer(cols = traits_numeric,
                      names_to = "trait",
-                     values_to = all_of(stats[i]))
+                     values_to = stats[i])
       
       stat_name <- paste(stats[i], "_x", sep = "")
       

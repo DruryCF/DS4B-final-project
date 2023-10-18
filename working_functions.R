@@ -2,7 +2,7 @@
 
 avonet_install <- function(filename){
   
-  cat("Downloading AvoNet...\n")
+  message("Downloading AvoNet...\n")
   
   download.file(url = "https://figshare.com/ndownloader/files/34480856?private_link=b990722d72a26b5bfead", destfile = filename, mode = "wb")
   
@@ -296,21 +296,21 @@ avonet_extract_intraspecies <- function (taxon_system = "birdlife",
     
     t_system <- taxon_systems$birdlife
     
-    cat("\ntaxon system:", tolower(t_c))
+    message("\ntaxon system:", tolower(t_c))
     
   } else {
     
     if (tolower(t_c) == "ebird") {
       
       t_system <- taxon_systems$ebird
-      cat("\ntaxon system:", tolower(t_c))
+      message("\ntaxon system:", tolower(t_c))
       
     } else {
       
       if (tolower(t_c) == "birdtree") {
         
         t_system <- taxon_systems$birdtree
-        cat("\ntaxon system:", tolower(t_c))
+        message("\ntaxon system:", tolower(t_c))
         
       } else {
         
@@ -458,7 +458,7 @@ avonet_extract_interspecies <- function (taxon_system = "birdlife",
   
   # Return data
   
-  cat("\ntaxon system:", tolower(t_c))
+  message("\ntaxon system:", tolower(t_c))
   return(data)
   
 }
@@ -575,7 +575,7 @@ avonet_summary <- function (data,
     }
   } 
   
-  cat("If present, NA values are included in count")
+  message("If present, NA values are included in count")
   
   return(summary)
   

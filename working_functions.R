@@ -1,6 +1,6 @@
 # Install data
 
-install_avonet <- function(filename){
+avonet_install <- function(filename){
   
   cat("Downloading AvoNet...\n")
   
@@ -12,7 +12,7 @@ install_avonet <- function(filename){
 
 # Load data
 
-load_avonet <- function(clean = "none") {
+avonet_load <- function(clean = "none") {
   
   # store avonet as list of tibbles
   
@@ -232,12 +232,12 @@ load_avonet <- function(clean = "none") {
 
 # extract data from raw_data
 
-extract_avonet <- function (taxon_system = "birdlife",
+avonet_extract_intraspecies <- function (taxon_system = "birdlife",
                             traits = NULL,
                             clean = "none") {
   
   t_c <- taxon_system
-  avonet <- load_avonet(clean = clean)
+  avonet <- avonet_load(clean = clean)
   data <- avonet$raw_data
   
   # Extract taxon systems
@@ -369,11 +369,11 @@ extract_avonet <- function (taxon_system = "birdlife",
 
 # extract data from species average tibbles
 
-extract_average_avonet <- function (taxon_system = "birdlife",
+avonet_extract_interspecies <- function (taxon_system = "birdlife",
                                     traits = NULL) {
   
   t_c <- taxon_system
-  avonet <- load_avonet()
+  avonet <- avonet_load()
   
   if (taxon_system == "birdlife") {
     
@@ -452,7 +452,7 @@ extract_average_avonet <- function (taxon_system = "birdlife",
 
 # summary function
 
-summary_avonet <- function (data,
+avonet_summary <- function (data,
                             group = c("species"),
                             stats = c("mean"),
                             tidy = FALSE

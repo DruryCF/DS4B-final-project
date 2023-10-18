@@ -16,7 +16,7 @@ library(readxl)
 # Download data function
 
 ```{r}
-install_avonet <- function(filename){
+avonet_install <- function(filename){
   
   cat("Downloading AvoNet...\n")
   
@@ -26,7 +26,7 @@ install_avonet <- function(filename){
 ```
 
 ```{r}
-install_avonet(filename = "raw_data/AVONET Supplementary dataset 1.xlsx")
+avonet_install(filename = "raw_data/AVONET Supplementary dataset 1.xlsx")
 ```
 
 # Load AvoNet
@@ -34,7 +34,7 @@ install_avonet(filename = "raw_data/AVONET Supplementary dataset 1.xlsx")
 Function loads, tidies, and applies optional cleaning to AvoNet dataset
 
 ```{r}
-load_avonet <- function(clean = "none") {
+avonet_load <- function(clean = "none") {
   
   # store avonet as list of tibbles
   
@@ -252,21 +252,21 @@ load_avonet <- function(clean = "none") {
 ```
 
 ```{r}
-avonet <- load_avonet(clean = "all")
+avonet <- avonet_load(clean = "all")
 avonet
 ```
 
 # extract set functional traits by set taxon system from $raw_data
 
-Function is able to retrieve the set taxon system through the 'taxon_system' argument and add this data to the raw dataset of AvoNet. Through the 'traits' argument, users can specify which traits they would like to extract, if unspecified all variables will remain available. Extract calls the load_avonet() function enabling users to bypass loading the entire database. The clean argument also passes to load_avonet() enabling dynamic cleaning.
+Function is able to retrieve the set taxon system through the 'taxon_system' argument and add this data to the raw dataset of AvoNet. Through the 'traits' argument, users can specify which traits they would like to extract, if unspecified all variables will remain available. Extract calls the avonet_load() function enabling users to bypass loading the entire database. The clean argument also passes to avonet_load() enabling dynamic cleaning.
 
 ```{r}
-extract_avonet <- function (taxon_system = "birdlife",
+avonet_extract_intraspecies <- function (taxon_system = "birdlife",
                             traits = NULL,
                             clean = "none") {
   
   t_c <- taxon_system
-  avonet <- load_avonet(clean = clean)
+  avonet <- avonet_load(clean = clean)
   data <- avonet$raw_data
   
   # Extract taxon systems
@@ -396,8 +396,8 @@ extract_avonet <- function (taxon_system = "birdlife",
 ```
 
 ```{r}
-extract <- extract_avonet(taxon_system = "birdlife", taxon_level = "family", traits = c(".length"))
-extract_clean <- extract_avonet(taxon_system = "birdlife", taxon_level = "family", traits = c(".length"), clean = "all")
+extract <- avonet_extract_intraspecies(taxon_system = "birdlife", taxon_level = "family", traits = c(".length"))
+extract_clean <- avonet_extract_intraspecies(taxon_system = "birdlife", taxon_level = "family", traits = c(".length"), clean = "all")
 
 extract
 extract_clean
@@ -408,11 +408,11 @@ extract_clean
 This function selects defined variables from the species average tibbles. These contain geographic data.
 
 ```{r}
-extract_average_avonet <- function (taxon_system = "birdlife",
+avonet_extract_interspecies <- function (taxon_system = "birdlife",
                                     traits = NULL) {
   
   t_c <- taxon_system
-  avonet <- load_avonet()
+  avonet <- avonet_load()
   
   if (taxon_system == "birdlife") {
     
@@ -489,16 +489,16 @@ extract_average_avonet <- function (taxon_system = "birdlife",
 ```
 
 ```{r}
-avg <- extract_average_avonet(traits = c("tail.length", "wing.length"))
+avg <- avonet_extract_interspecies(traits = c("tail.length", "wing.length"))
 avg
 ```
 
 # summarise function
 
-Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with extract_avonet() and extract_average_avonet(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels. By setting tidy = TRUE, the function will return summary stats in tidy format. Function will always return count data for each group. Note that count data returns the number of observations for that species, not the number of species with values for that trait.
+Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with avonet_extract_intraspecies() and avonet_extract_interspecies(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels. By setting tidy = TRUE, the function will return summary stats in tidy format. Function will always return count data for each group. Note that count data returns the number of observations for that species, not the number of species with values for that trait.
 
 ```{r}
-summary_avonet <- function (data,
+avonet_summary <- function (data,
                             group = c("species"),
                             stats = c("mean"),
                             tidy = FALSE
@@ -615,15 +615,15 @@ summary_avonet <- function (data,
 ```
 
 ```{r}
-summary <- summary_avonet(data = extract, group = c("species"), stats = c("mean", "median", "max", "min", "sd"), tidy = FALSE)
-summary_tidy <- summary_avonet(data = extract, group = c("species"), stats = c("mean", "median", "max", "min", "sd"), tidy = TRUE)
+summary <- avonet_summary(data = extract, group = c("species"), stats = c("mean", "median", "max", "min", "sd"), tidy = FALSE)
+summary_tidy <- avonet_summary(data = extract, group = c("species"), stats = c("mean", "median", "max", "min", "sd"), tidy = TRUE)
 
 summary
 summary_tidy
 ```
 
 ```{r}
-summary2 <- summary_avonet(data = avg, group = c("family"), stats = c("mean", "median", "max", "min", "sd"), tidy = FALSE)
+summary2 <- avonet_summary(data = avg, group = c("family"), stats = c("mean", "median", "max", "min", "sd"), tidy = FALSE)
 summary2
 ```
 

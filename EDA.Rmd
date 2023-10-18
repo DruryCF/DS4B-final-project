@@ -26,7 +26,7 @@ avonet_install <- function(filename){
 ```
 
 ```{r}
-avonet_install(filename = "raw_data/AVONET Supplementary dataset 1.xlsx")
+avonet_install(filename = "raw_data/avonet_dataset.xlsx")
 ```
 
 # Load AvoNet
@@ -268,7 +268,7 @@ avonet_load <- function(filename,
 ```
 
 ```{r}
-avonet <- avonet_load(filename = "raw_data/AVONET Supplementary dataset 1.xlsx",
+avonet <- avonet_load(filename = "raw_data/avonet_dataset.xlsx",
                       clean = "all")
 avonet
 ```
@@ -414,8 +414,8 @@ avonet_extract_intraspecies <- function (filename,
 ```
 
 ```{r}
-extract <- avonet_extract_intraspecies(filename = "raw_data/AVONET Supplementary dataset 1.xlsx", taxon_system = "birdlife", traits = c("sex", ".length"))
-extract_clean <- avonet_extract_intraspecies(filename = "raw_data/AVONET Supplementary dataset 1.xlsx", taxon_system = "birdlife", traits = c("sex", ".length"), clean = "all")
+extract <- avonet_extract_intraspecies(filename = "raw_data/avonet_dataset.xlsx", taxon_system = "birdlife", traits = c("sex", ".length"))
+extract_clean <- avonet_extract_intraspecies(filename = "raw_data/avonet_dataset.xlsx", taxon_system = "birdlife", traits = c("sex", ".length"), clean = "all")
 
 extract
 extract_clean
@@ -508,7 +508,7 @@ avonet_extract_interspecies <- function (filename,
 ```
 
 ```{r}
-avg <- avonet_extract_interspecies(filename = "raw_data/AVONET Supplementary dataset 1.xlsx", traits = c("tail.length", "wing.length"))
+avg <- avonet_extract_interspecies(filename = "raw_data/avonet_dataset.xlsx", traits = c("tail.length", "wing.length"))
 avg
 ```
 

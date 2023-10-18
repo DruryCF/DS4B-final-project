@@ -12,7 +12,8 @@ avonet_install <- function(filename){
 
 # Load data
 
-avonet_load <- function(clean = "none") {
+avonet_load <- function(filename,
+                        clean = "none") {
   
   # store avonet as list of tibbles
   
@@ -21,7 +22,7 @@ avonet_load <- function(clean = "none") {
   names <- c("metadata", "birdlife", "ebird", "birdtree", "pigot", "raw_data", "mass_sources", "data_sources", "measurers", "crosswalk_birdlife_ebird", "crosswalk_birdlife_birdtree")
   
   for (i in 1:11) {
-    x <- setNames(list(suppressWarnings(read_xlsx("raw_data/AVONET Supplementary dataset 1.xlsx", sheet = i, na = "NA"))), names[i])
+    x <- setNames(list(suppressWarnings(read_xlsx(filename, sheet = i, na = "NA"))), names[i])
     avonet <- append(avonet, x)
   }
   
@@ -247,12 +248,13 @@ avonet_load <- function(clean = "none") {
 
 # extract data from raw_data
 
-avonet_extract_intraspecies <- function (taxon_system = "birdlife",
-                            traits = NULL,
-                            clean = "none") {
+avonet_extract_intraspecies <- function (filename,
+                                         taxon_system = "birdlife",
+                                         traits = NULL,
+                                         clean = "none") {
   
   t_c <- taxon_system
-  avonet <- avonet_load(clean = clean)
+  avonet <- avonet_load(filename = filename, clean = clean)
   data <- avonet$raw_data
   
   # Extract taxon systems
@@ -384,11 +386,12 @@ avonet_extract_intraspecies <- function (taxon_system = "birdlife",
 
 # extract data from species average tibbles
 
-avonet_extract_interspecies <- function (taxon_system = "birdlife",
-                                    traits = NULL) {
+avonet_extract_interspecies <- function (filename,
+                                         taxon_system = "birdlife",
+                                         traits = NULL) {
   
   t_c <- taxon_system
-  avonet <- avonet_load()
+  avonet <- avonet_load(filename = filename)
   
   if (taxon_system == "birdlife") {
     
@@ -499,7 +502,7 @@ avonet_summary <- function (data,
     for(i in 1:length(stats)) {
       
       stat <- extract %>% 
-        summarise_at(traits_numeric, c(get(stats[i])), na.rm = T) %>% 
+        summarise_at(all_of(traits_numeric), c(get(stats[i])), na.rm = T) %>% 
         pivot_longer(cols = traits_numeric,
                      names_to = "trait",
                      values_to = all_of(stats[i]))

@@ -134,9 +134,9 @@ avonet_load <- function(clean = "none") {
   describe_sheets <- setNames(list(tibble(tibble_name = c("description", names(avonet)),
                                           description = c("This tibble; describes tibbles in AvoNet dataset",
                                                           "Definitions and descriptions of variables and key terms",
-                                                          "Averages across functional traits for species according to BirdLife International taxonomy classification; includes traits recorded only at the species level and not the individual such as mass and geophraphic data",
-                                                          "Averages across functional traits for species according to eBird taxonomy classification; includes traits recorded only at the species level and not the individual such as mass and geophraphic data",
-                                                          "Averages across functional traits for species according to BirdTree taxonomy classification; includes traits recorded only at the species level and not the individual such as mass and geophraphic data",
+                                                          "Averages across functional traits for species according to BirdLife International taxonomy classification (excludes intraspecies variation); includes traits recorded only at the species level and not the individual such as mass and geographic data",
+                                                          "Averages across functional traits for species according to eBird taxonomy classification (excludes intraspecies variation); includes traits recorded only at the species level and not the individual such as mass and geographic data",
+                                                          "Averages across functional traits for species according to BirdTree taxonomy classification (excludes intraspecies variation); includes traits recorded only at the species level and not the individual such as mass and geographic data",
                                                           "The functional trait dataset using birdtree taxonomy built by Pigot and published in 2020 that the raw_data added to",
                                                           "Functional trait observations for individual birds; can be used for intraspecies variation",
                                                           "Details sources from which the mass trait values were derived or taken",
@@ -144,10 +144,10 @@ avonet_load <- function(clean = "none") {
                                                           "Gives the full names of measurers linked to the code given in raw_data and the number of individuals that they measured",
                                                           "Shows how the ebird species concepts map onto the birdlife species concepts",
                                                           "Shows how the birdtree species concepts map onto the birdlife species concepts"
-                                          )
-  )
-  ),
-  nm = "description")
+                                                        )
+                                   )
+                              ),
+                              nm = "description")
   
   
   avonet <- append(avonet, describe_sheets, after = 0)

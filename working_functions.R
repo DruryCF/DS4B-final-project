@@ -27,7 +27,7 @@ avonet_load <- function(clean = "none") {
   
   # Rename variables
   
-  # Make variables lowercase across tibbles
+  ## Make variables lowercase across tibbles
   
   colnames(avonet$metadata) <- tolower(colnames(avonet$metadata))
   colnames(avonet$birdlife) <- tolower(colnames(avonet$birdlife))
@@ -41,7 +41,7 @@ avonet_load <- function(clean = "none") {
   colnames(avonet$crosswalk_birdlife_ebird) <- tolower(colnames(avonet$crosswalk_birdlife_ebird))
   colnames(avonet$crosswalk_birdlife_birdtree) <- tolower(colnames(avonet$crosswalk_birdlife_birdtree))
   
-  # Make variable character values lowercase in metadata tibble -> method adapted from StackOverflow (https://stackoverflow.com/questions/50615116/renaming-character-variables-in-a-column-in-data-frame-r)
+  ## Make variable character values lowercase in metadata tibble -> method adapted from StackOverflow (https://stackoverflow.com/questions/50615116/renaming-character-variables-in-a-column-in-data-frame-r)
   
   variable_old_name <- c(avonet$metadata$variable)
   
@@ -51,10 +51,25 @@ avonet_load <- function(clean = "none") {
   
   avonet$metadata$variable <- as.character(variable_lookup[avonet$metadata$variable])
   
-  # Remove space in 'variable types' in metadata tibble
+  ## Remove space in 'variable types' in metadata tibble
   
   avonet$metadata <- avonet$metadata %>% 
     rename(variable.types = `variable types`)
+  
+  ## Replace '-' in hand-wing.index
+  
+  avonet$birdlife <- avonet$birdlife %>% 
+    rename(`hand_wing.index` = `hand-wing.index`)
+  avonet$ebird <- avonet$ebird %>% 
+    rename(`hand_wing.index` = `hand-wing.index`)
+  avonet$birdtree <- avonet$birdtree %>% 
+    rename(`hand_wing.index` = `hand-wing.index`)
+  avonet$raw_data <- avonet$raw_data %>% 
+    rename(`hand_wing.index` = `hand-wing.index`)
+  
+  avonet$metadata <- avonet$metadata %>% 
+    mutate(variable = case_when(variable == "hand-wing.index" ~ "hand_wing.index",
+                                variable != "hand-wing.index" ~ variable))
   
   # Correct variable class
   

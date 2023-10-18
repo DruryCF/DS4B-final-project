@@ -411,8 +411,8 @@ avonet_extract_intraspecies <- function (taxon_system = "birdlife",
 ```
 
 ```{r}
-extract <- avonet_extract_intraspecies(taxon_system = "birdlife", traits = c(".length"))
-extract_clean <- avonet_extract_intraspecies(taxon_system = "birdlife", traits = c(".length"), clean = "all")
+extract <- avonet_extract_intraspecies(taxon_system = "birdlife", traits = c("sex", ".length"))
+extract_clean <- avonet_extract_intraspecies(taxon_system = "birdlife", traits = c("sex", ".length"), clean = "all")
 
 extract
 extract_clean
@@ -510,7 +510,7 @@ avg
 
 # summarise function
 
-Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with avonet_extract_intraspecies() and avonet_extract_interspecies(). Currently, function does not seem to be able to compute summary statistics when grouping by multiple levels. By setting tidy = TRUE, the function will return summary stats in tidy format. Function will always return count data for each group. Note that count data returns the number of observations for that species, not the number of species with values for that trait.
+Function returns summary statistics defined by 'stats' argument for each 'group' value and each numeric variable passed to the function through the 'data' argument. Designed to be used in conjunction with avonet_extract_intraspecies() and avonet_extract_interspecies(). By setting tidy = TRUE, the function will return summary stats in tidy format. Function will always return count data for each group. Note that count data returns the number of observations for that species, not the number of species with values for that trait.
 
 ```{r}
 avonet_summary <- function (data,
@@ -639,5 +639,12 @@ summary_tidy
 ```{r}
 summary2 <- avonet_summary(data = avg, group = c("family"), stats = c("mean", "median", "max", "min", "sd"), tidy = FALSE)
 summary2
+```
+
+Function can group by multiple levels enabling partitioning of species averages by sex.
+
+```{r}
+summary3 <- avonet_summary(data = extract, group = c("species", "sex"), stats = c("mean"), tidy = FALSE)
+summary3
 ```
 

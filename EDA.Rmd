@@ -559,29 +559,6 @@ avonet_summary <- function (data,
         
       }
       
-      # Add count data
-      
-      count <- extract %>% 
-          summarise(count = n())
-      
-      name <- group[length(group)]
-      
-      count <- count %>% 
-        rename(var = name)
-
-      group_lookup <- setNames(c(count$count), c(count$var))
-      
-      summary <- summary %>% 
-        rename(var = name)
-      
-      summary$count <- as.character(group_lookup[summary$var])
-
-      summary <- summary %>% 
-        rename(!!name := var) %>% 
-        relocate(count,
-                 .after = trait)
-      
-      
     } else {
       
         stat_name <- paste(stats[1], "_x", sep = "")
@@ -589,6 +566,28 @@ avonet_summary <- function (data,
         summary <- get(stat_name, envir = environment())
       
       }
+    
+    # Add count data
+    
+    count <- extract %>% 
+        summarise(count = n())
+    
+    name <- group[length(group)]
+    
+    count <- count %>% 
+      rename(var = name)
+
+    group_lookup <- setNames(c(count$count), c(count$var))
+    
+    summary <- summary %>% 
+      rename(var = name)
+    
+    summary$count <- as.character(group_lookup[summary$var])
+
+    summary <- summary %>% 
+      rename(!!name := var) %>% 
+      relocate(count,
+               .after = trait)
     
   } else {
     

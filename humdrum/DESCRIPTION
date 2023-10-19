@@ -1,0 +1,17 @@
+Package: humdrum
+Title: Interface with AvoNet
+Version: 0.0.0.9000
+Authors@R: 
+    person("Charlotte", "Drury", , "u6603688@anu.edu.au", role = c("aut", "cre"))
+Description: Installs AvoNet dataset and loads as a relational database. Tidies data where
+    necessary, enables optional cleaning. Extracts defined variables according to
+    defined taxonomy. Applies summary statistics.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+    data.table,
+    dplyr,
+    readxl,
+    tidyr

@@ -55,7 +55,7 @@ You can install the development version of humdrum from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("DruryCF/DS4B-final-project")
+devtools::install_github("DruryCF/DS4B-final-project", subdir = "humdrum")
 ```
 
 ## Example

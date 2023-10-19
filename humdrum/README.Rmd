@@ -13,10 +13,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-# dependencies
-
-humdrum relies heavily on tidyverse packages, specifically data.table, dplyr, readxl, and tidyr.
-
 # humdrum
 
 <!-- badges: start -->
@@ -33,6 +29,10 @@ Humdrum has functions to:
 * tidy data when loading (largely correcting variable class and renaming as AvoNet is already in tidy format)
 * clean data when loading (toggled based on user preference)
 * facilitate Exploratory Data Analysis (EDA) (extract defined variables according to different taxonomies and apply summary statistics)
+
+## dependencies
+
+humdrum relies heavily on tidyverse packages, specifically data.table, dplyr, readxl, and tidyr.
 
 ## Installation
 
@@ -93,6 +93,7 @@ Tobias, J.A., Sheard, C., Pigot, A.L. et al. (2022). AVONET: morphological, ecol
 Westgate, M., Kellie, D., Stevenson, M., Newman, P. (2023). _galah: Biodiversity Data from the Living Atlas Community_. R package version 1.5.3, https://CRAN.R-project.org/package=galah
 
 Note:
+
 Package was built using the devtools package following https://r-pkgs.org/
 
 Hexsticker was built using the hexSticker package following https://www.youtube.com/watch?v=O34vzdHOaEk

@@ -1,11 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# dependencies
-
-humdrum relies heavily on tidyverse packages, specifically data.table,
-dplyr, readxl, and tidyr.
-
 # <img src="https://github.com/DruryCF/DS4B-final-project/assets/141908184/817df146-5e8c-4057-abd1-84fb62d81808" height="100">humdrum
 
 <!-- badges: start -->
@@ -48,6 +43,12 @@ preference)
 \* facilitate Exploratory Data Analysis (EDA) (extract
 defined variables according to different taxonomies and apply summary
 statistics)
+
+## Dependencies
+
+humdrum relies heavily on tidyverse packages, specifically data.table,
+dplyr, readxl, and tidyr.
+
 ## Installation
 
 You can install the development version of humdrum from
@@ -200,7 +201,9 @@ Westgate, M., Kellie, D., Stevenson, M., Newman, P. (2023). *galah:
 Biodiversity Data from the Living Atlas Community*. R package version
 1.5.3, <https://CRAN.R-project.org/package=galah>
 
-Note: Package was built using the devtools package following
+Note:
+
+Package was built using the devtools package following
 <https://r-pkgs.org/>
 
 Hexsticker was built using the hexSticker package following

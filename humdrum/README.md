@@ -6,7 +6,7 @@
 humdrum relies heavily on tidyverse packages, specifically data.table,
 dplyr, readxl, and tidyr.
 
-# humdrum
+# <img src="https://github.com/DruryCF/DS4B-final-project/assets/141908184/817df146-5e8c-4057-abd1-84fb62d81808" height="100">humdrum
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -33,14 +33,21 @@ according to the BirdLife taxonomy classification (RS-eco, 2022). An
 R-package that interfaces with the entirety of AvoNet would facilitate
 EDA and potentially aid in addressing specific research questions.
 
-Humdrum has functions to: \* install and load AvoNet as a relational
-database (stored as a list of tibbles) \* tidy data when loading
+Humdrum has functions to:
+
+\* install and load AvoNet as a relational
+database (stored as a list of tibbles)
+
+\* tidy data when loading
 (largely correcting variable class and renaming as AvoNet is already in
-tidy format) \* clean data when loading (toggled based on user
-preference) \* facilitate Exploratory Data Analysis (EDA) (extract
+tidy format)
+
+\* clean data when loading (toggled based on user
+preference)
+
+\* facilitate Exploratory Data Analysis (EDA) (extract
 defined variables according to different taxonomies and apply summary
 statistics)
-
 ## Installation
 
 You can install the development version of humdrum from

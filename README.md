@@ -5,10 +5,9 @@
 humdrum relies heavily on tidyverse packages, specifically data.table,
 dplyr, readxl, and tidyr.
 
-# humdrum
+# ![humdrum_hexSticker](https://github.com/DruryCF/DS4B-final-project/assets/141908184/817df146-5e8c-4057-abd1-84fb62d81808)humdrum
 
 <!-- badges: start -->
-![humdrum_hexSticker](https://github.com/DruryCF/DS4B-final-project/assets/141908184/817df146-5e8c-4057-abd1-84fb62d81808)
 <!-- badges: end -->
 
 The goal of humdrum is to interface with the AvoNet dataset and take the

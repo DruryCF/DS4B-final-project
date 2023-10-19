@@ -1632,7 +1632,9 @@ linked in the original AvoNet paper as ‘AVONET Supplementary dataset 1’
 <p>Humdrum’s function, avonet_install(), accomplishes downloading AvoNet
 for the user. avonet_install() only takes one argument, the file
 destination of the downloaded file (filename).</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(humdrum) <span class="co">#install with auth_token</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
 <pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ## ✔ dplyr     1.1.2     ✔ readr     2.1.4
 ## ✔ forcats   1.0.0     ✔ stringr   1.5.0
@@ -1643,9 +1645,7 @@ destination of the downloaded file (filename).</p>
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;working_functions.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(skimr)</span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">avonet_install</span>(<span class="at">filename =</span> <span class="st">&quot;raw_data/avonet_dataset.xlsx&quot;</span>)</span></code></pre></div>
 <pre><code>## Downloading AvoNet...</code></pre>
 <p>Should additional versions of AvoNet be released in the future and
@@ -2440,35 +2440,9 @@ taxonomic levels.</p>
 to data extracted using avonet_extract_interspecies()), we can apply
 summary statistics to this extracted data.</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>intraspecies_summary <span class="ot">&lt;-</span> <span class="fu">avonet_summary</span>(<span class="at">data =</span> intraspecies, <span class="at">group =</span> <span class="fu">c</span>(<span class="st">&quot;species&quot;</span>, <span class="st">&quot;sex&quot;</span>), <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;sd&quot;</span>), <span class="at">tidy =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<pre><code>## Warning: Using an external vector in selections was deprecated in tidyselect 1.1.0.
-## ℹ Please use `all_of()` or `any_of()` instead.
-##   # Was:
-##   data %&gt;% select(traits_numeric)
-## 
-##   # Now:
-##   data %&gt;% select(all_of(traits_numeric))
-## 
-## See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;species&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<pre><code>## Warning: Using an external vector in selections was deprecated in tidyselect 1.1.0.
-## ℹ Please use `all_of()` or `any_of()` instead.
-##   # Was:
-##   data %&gt;% select(name)
-## 
-##   # Now:
-##   data %&gt;% select(all_of(name))
-## 
-## See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
 <pre><code>## 
 ## If present, NA values are included in count</code></pre>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a>intraspecies_summary</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a>intraspecies_summary</span></code></pre></div>
 <pre><code>## # A tibble: 45,224 × 7
 ##    species                sex   trait       count  mean median     sd
 ##    &lt;chr&gt;                  &lt;fct&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
@@ -2486,11 +2460,10 @@ summary statistics to this extracted data.</p>
 <p>This function defaults to a non-tidy format as it is easier to
 explore visually. For analysis, the tidy argument can be set to
 TRUE.</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a>intraspecies_summary <span class="ot">&lt;-</span> <span class="fu">avonet_summary</span>(<span class="at">data =</span> intraspecies, <span class="at">group =</span> <span class="fu">c</span>(<span class="st">&quot;species&quot;</span>, <span class="st">&quot;sex&quot;</span>), <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;sd&quot;</span>), <span class="at">tidy =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;species&#39;. You can override using the
-## `.groups` argument.
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>intraspecies_summary <span class="ot">&lt;-</span> <span class="fu">avonet_summary</span>(<span class="at">data =</span> intraspecies, <span class="at">group =</span> <span class="fu">c</span>(<span class="st">&quot;species&quot;</span>, <span class="st">&quot;sex&quot;</span>), <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;sd&quot;</span>), <span class="at">tidy =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## 
 ## If present, NA values are included in count</code></pre>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a>intraspecies_summary</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a>intraspecies_summary</span></code></pre></div>
 <pre><code>## # A tibble: 22,612 × 9
 ##    species       sex   count wing.length_mean secondary1_mean wing.length_median
 ##    &lt;chr&gt;         &lt;fct&gt; &lt;int&gt;            &lt;dbl&gt;           &lt;dbl&gt;              &lt;dbl&gt;

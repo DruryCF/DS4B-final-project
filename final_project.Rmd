@@ -50,10 +50,10 @@ The raw data is obtainable from: https://figshare.com/ndownloader/files/34480856
 Humdrum's function, avonet_install(), accomplishes downloading AvoNet for the user. avonet_install() only takes one argument, the file destination of the downloaded file (filename).
 
 ```{r}
-library(tidyverse, quietly = TRUE)
+library(humdrum) #install with auth_token
 library(readxl)
+library(tidyverse)
 library(skimr)
-source("working_functions.R")
 ```
 
 ```{r}

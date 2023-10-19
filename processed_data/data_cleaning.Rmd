@@ -14,8 +14,7 @@ knitr::opts_knit$set(root.dir = normalizePath("..")) # Set wd to project wd from
 library(tidyverse, quietly = TRUE)
 library(readxl)
 library(skimr)
-library(GGally)
-source("working_functions.R")
+library(humdrum)
 ```
 
 # Download Avonet

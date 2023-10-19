@@ -53,6 +53,7 @@ raw_data/avonet_dataset.xlsx
 
 # Code testing
 code_testing.Rmd
+working_functions.R
 
 # Hex sticker development
 /images

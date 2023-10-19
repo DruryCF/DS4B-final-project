@@ -17,7 +17,7 @@ output:
 
 # Word/figure count
 
-words: 2000
+words: 1998
 
 figures: 0
 

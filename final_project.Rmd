@@ -17,7 +17,7 @@ output:
 
 # Word/figure count
 
-words: 1999
+words: 2000
 
 figures: 0
 
@@ -41,16 +41,17 @@ Aim: to build an R-package (Humdrum) to interface with AvoNet
 
 Justification: 
 
-AvoNet is difficult to explore and interact with as it is stored across 11 related excel spreadsheets. Other datasets stored similarly (e.g. AusTraits, Atlas of Living Australia) have dedicated R-packages to streamline their use (Falster et al., 2021; Westgate et al., 2023). Some of AvoNet is incorporated in the 'traitdata' package, however this (at the time of writing) is only a single observed individual per species according to the BirdLife taxonomy classification (RS-eco, 2022). An R-package that interfaces with the entirety of AvoNet would facilitate EDA and potentially aid in addressing specific research questions.
+AvoNet is difficult to explore and interact with as it is stored across 11 related excel spreadsheets. Other datasets stored similarly (e.g. AusTraits, Atlas of Living Australia) have dedicated R-packages to streamline their use (Falster et al., 2021; Westgate et al., 2023). Some of AvoNet is incorporated in the `traitdata` package, however this (at the time of writing) is only a single observed individual per species according to the BirdLife taxonomy classification (RS-eco, 2022). An R-package that interfaces with the entirety of AvoNet would facilitate EDA and potentially aid in addressing specific research questions.
 
 # Raw data
 
-The raw data is obtainable from: https://figshare.com/ndownloader/files/34480856?private_link=b990722d72a26b5bfead; linked in the original AvoNet paper as 'AVONET Supplementary dataset 1' (Tobias et al., 2022).
+The raw data is obtainable from: https://figshare.com/ndownloader/files/34480856?private_link=b990722d72a26b5bfead; linked as `AVONET Supplementary dataset 1` in Tobias and colleagues (2022).
 
-Humdrum's function, avonet_install(), accomplishes downloading AvoNet for the user. avonet_install() only takes one argument, the file destination of the downloaded file (filename).
+`humdrum`'s function, `avonet_install()`, accomplishes downloading AvoNet for the user. `avonet_install()` only takes one argument, the file destination of the downloaded file (`filename`).
 
 ```{r}
-library(humdrum) #install with auth_token
+#devtools::install_github("DruryCF/DS4B-final-project", subdir = "humdrum", auth_token = "generate token")
+library(humdrum)
 library(readxl)
 library(tidyverse)
 library(skimr)
@@ -59,11 +60,12 @@ library(skimr)
 ```{r}
 avonet_install(filename = "raw_data/avonet_dataset.xlsx")
 ```
-Should additional versions of AvoNet be released in the future and older versions remain available via separate link, a version argument may be added to avonet_install() to enable users to access specific releases of AvoNet.
+
+Should additional versions of AvoNet be released in the future and older versions remain available via separate link, a version argument may be added to `avonet_install()` to enable users to access specific releases of AvoNet.
 
 # Data wrangling
 
-Humdrum's function avonet_load() automatically tidies and optionally cleans the AvoNet dataset. Currently, cleaning is limited to the raw_data tibble as the birdtree, ebird, and birdlife tibbles were determined to not require cleaning (for details see processed_data/data_cleaning.Rmd). The clean argument can variably clean some of the data based on defined criteria (e.g. clean = "gapspecies" will remove and relocate all species with no observations from the raw_data tibble to a new gapspecies tibble). When cleaning is applied, the avonet_exclude object will be written to the global environment, detailing removed observations. The excluded_data_raw_data.csv found in /processed_data and produced in data_cleaning.Rmd details all cleaning options (apart from those concerning variables rather than observations) and how to execute them through the clean argument.
+`humdrum`'s function `avonet_load()` automatically tidies and optionally cleans the AvoNet dataset. Currently, cleaning is limited to the `raw_data` tibble as the `birdtree`, `ebird`, and `birdlife` tibbles were determined to not require cleaning (for details see `processed_data/data_cleaning.Rmd`). The `clean` argument can variably clean some of the data based on defined criteria (e.g. `clean = "gapspecies"` will remove and relocate all species with no observations from the `raw_data` tibble to a new `gapspecies` tibble). When cleaning is applied, the `avonet_exclude` object will be written to the global environment, detailing removed observations. The `excluded_data_raw_data.csv` found in `/processed_data` and produced in `data_cleaning.Rmd` details all cleaning options (apart from those concerning variables rather than observations) and how to execute them through the `clean` argument.
 
 ```{r}
 avonet_tidy <- avonet_load(filename = "raw_data/avonet_dataset.xlsx")
@@ -75,7 +77,7 @@ avonet_clean$gapspecies
 avonet_exclude$raw_data
 ```
 
-avonet_load() uses read_xlxs() from the readxl package (under the tidyverse package v2.0.0) to read each excel sheet in the AvoNet dataset. It uses the colnames() and tolower() functions to make all variable names lowercase to increase consistency and ease of use (additionally renames hand-wing.index with hand_wing.index). It also corrects variable class where necessary (usually numeric or character to factor). For example:
+`avonet_load()` uses `read_xlxs()` from the `readxl` package (under the `tidyverse` package v2.0.0) to read each excel sheet in the AvoNet dataset. It uses the `colnames()` and `tolower()` functions to make all variable names lowercase to increase consistency and ease of use (additionally renames `hand-wing.index` with `hand_wing.index`). It also corrects variable class where necessary (usually numeric or character to factor). For example:
 
 ```{r}
 raw_data <- read_xlsx("raw_data/avonet_dataset.xlsx", sheet = "AVONET_Raw_Data", na = "NA")
@@ -112,9 +114,9 @@ raw_data$sex <- raw_data$sex %>%
 write.csv(raw_data, file = "processed_data/tidied_data_raw_data.csv")
 ```
 
-This tidied version of the raw_data tibble in AvoNet can be found as a separate .csv in /processed_data along with the tided versions of the birdlife, ebird, and birdtree, tibbles. The code behind these files can be found in data_cleaning.Rmd.
+This tidied version of the `raw_data` tibble in AvoNet can be found as a separate `.csv` in `/processed_data` along with the tided versions of the `birdlife`, `ebird`, and `birdtree`, tibbles. The code behind these files can be found in `data_cleaning.Rmd`.
 
-While avonet_load() can optionally clean the data, the excluded_data_raw_data.csv can also be used to remove the relevant observations from tidied_data_raw_data.csv. Note that this will not remove the locality and country variables which are removed in avonet_load() by setting clean to "empty" or "all" as the data for these variables is currently embargoed.
+While `avonet_load()` can optionally clean the data, the `excluded_data_raw_data.csv` can also be used to remove the relevant observations from `tidied_data_raw_data.csv`. Note that this will not remove the `locality` and `country` variables which are removed in `avonet_load()` by setting clean to `"empty"` or `"all"` as the data for these variables is currently embargoed.
 
 ```{r}
 raw_data_tidy <- read_csv("processed_data/tidied_data_raw_data.csv")
@@ -129,7 +131,7 @@ raw_data_clean
 raw_data_exclude
 ```
 
-avonet_load() also adds an additional tibble to the original dataset under [object_name]$description that describes each tibble or excel spreadsheet in the original dataset (Note that it does not describe the 'gapspecies' tibble created using the clean argument).
+`avonet_load()` also adds an additional tibble to the original dataset under `[object_name]$description` that describes each tibble or excel spreadsheet in the original dataset (Note that it does not describe the `gapspecies` tibble created using the `clean` argument).
 
 ```{r}
 avonet_clean$description
@@ -138,23 +140,23 @@ avonet_clean$description
 
 # Sanity checks
 
-To check that the raw data is clean, we can use skim() from the skimr package.
+To check that the raw data is clean, we can use `skim()` from the `skimr` package.
 
 ```{r}
 skim(avonet_clean$raw_data)
 ```
 
-The data has the expected number of continuous morphological traits (10), the 11th morphological trait, mass, is stored exclusively in the interspecies tibbles (i.e. birdlife, ebird, birdtree; these exclude intraspecies variation as values are species means) as the trait was extracted from literature for each species and not measured for individuals. The data has the expected number of rows (19,019; from 19,020 individuals where one removed as unidentified species - this individual can be optionally included by instructing the clean argument in avonet_load()). The range across the numeric traits seems reasonable, given knowledge of variation between bird species.
+The data has the expected number of continuous morphological traits (10), the 11th morphological trait, mass, is stored exclusively in the interspecies tibbles (i.e. `birdlife`, `ebird`, `birdtree`; these exclude intraspecies variation as values are species means) as the trait was extracted from literature for each species and not measured for individuals. The data has the expected number of rows (19,019; from 19,020 individuals where one removed as unidentified species - this individual can be optionally included by instructing the `clean` argument in `avonet_load()`). The range across the numeric traits seems reasonable, given knowledge of variation between bird species.
 
 # Addressing the questions/aims
 
-Since it was published last year, the original paper releasing AvoNet (Tobias et al., 2022) has been cited at least 115 times. From a sample of 25 citing papers 7 used the AvoNet dataset as a major contributor (using several variables; e.g. Reid et al., 2023) while 11 used the dataset in a minor way (using single values or variables; e.g. Lin et al., 2023). Humdrum is an R package (dependent on the tidyverse package (built under 2.0.0) including non-core package readxl) designed to interface with AvoNet. Humdrum is intended to ease exploratory data analysis (EDA) and answering research questions using AvoNet. Furthermore, interacting with and using AvoNet through Humdrum can increase the reproducibility of research like similar packages aim to do (e.g. Román-Palacios, 2023; Westgate et al., 2023). Reproducibility is a major issue across sciences including ecology and evolution (Parker et al., 2016). Methodology (including cleaning, editing, code, etc.) and results are often reported in insufficient detail to enable the reproduction of research. Thus, interpretation of and building on this research is impaired significantly.
+Since it was published last year, the original paper releasing AvoNet (Tobias et al., 2022) has been cited at least 115 times. From a sample of 25 citing papers 7 used the AvoNet dataset as a major contributor (using several variables; e.g. Reid et al., 2023) while 11 used the dataset in a minor way (using single values or variables; e.g. Lin et al., 2023). `humdrum` is an R package (dependent on the `tidyverse` package (built under v2.0.0) including non-core package `readxl`) designed to interface with AvoNet. `humdrum` is intended to ease exploratory data analysis (EDA) and answering research questions using AvoNet. Furthermore, interacting with and using AvoNet through `humdrum` can increase the reproducibility of research like similar packages aim to do (e.g. Román-Palacios, 2023; Westgate et al., 2023). Reproducibility is a major issue across sciences including ecology and evolution (Parker et al., 2016). Methodology (including cleaning, editing, code, etc.) and results are often reported in insufficient detail to enable the reproduction of research. Thus, interpretation of and building on this research is impaired significantly.
 
-Reid and colleagues (2023) used AvoNet variables to calculate a wing loading index as a proxy for flight manoeuvrablity. They calculated this variable as body mass / (wing length * wing width). While body mass corresponds to the mass variable in AvoNet and wing length presumably corresponds to wing.length (although AvoNet includes additional measures of wing length), the variable they use for wing width is uncertain. Most likely, secondary1 was used for wing width as it measures approximately perpendicular to wing length in many species (Tobias et al., 2023) Additionally, it is uncertain which taxonomy classification they performed their calculations using. This is an example of under-reporting of methodology which hampers reproducibility; although the data is publically available, it is uncertain what Reid and colleagues did to achieve their results. Using Humdrum to interface with AvoNet and tidyverse functions to perform calculations, Reid and colleagues could have easily built an entirely reproducible workflow.
+Reid and colleagues (2023) used AvoNet variables to calculate a wing loading index as a proxy for flight manoeuvrablity. They calculated this variable as body mass / (wing length * wing width). While body mass corresponds to the `mass` variable in AvoNet and wing length presumably corresponds to `wing.length` (although AvoNet includes additional measures of wing length), the variable they use for wing width is uncertain. Most likely, `secondary1` was used as it measures approximately perpendicular to `wing.length` in many species (Tobias et al., 2023) Additionally, it is uncertain which taxonomy classification they performed their calculations using. This is an example of under-reporting of methodology which hampers reproducibility; although the data is publicly available, it is uncertain what Reid and colleagues did to achieve their results. Using `humdrum` to interface with AvoNet and `tidyverse` functions to perform calculations, Reid and colleagues could have easily built an entirely reproducible workflow.
 
-Assuming Reid and colleagues used the mass, wing.length, and secondary1 variables according to the birdlife taxonomy to calculate their wing loading index (FM), Humdrum and tidyverse can be used to reproduce their calculations.
+Assuming Reid and colleagues used the `mass`, `wing.length`, and `secondary1` variables according to the birdlife taxonomy to calculate their wing loading index (FM), `humdrum` and `tidyverse` can be used to reproduce their calculations.
 
-After using avonet_install(), avonet_extract_interspecies() can be used to bypass avonet_load() (as it calls this function directly) and select the needed variables (along with other relevant information).
+After using `avonet_install()`, `avonet_extract_interspecies()` can be used to bypass `avonet_load()` (as it calls this function directly) and select the needed variables (along with other relevant information).
 
 ```{r}
 reid_variables <- avonet_extract_interspecies(filename = "raw_data/avonet_dataset.xlsx",
@@ -163,7 +165,7 @@ reid_variables <- avonet_extract_interspecies(filename = "raw_data/avonet_datase
 reid_variables
 ```
 
-Using mutate() from tidyverse, the raw wing loading index is quickly calculated.
+Using `mutate()` from `tidyverse`, the raw wing loading index is quickly calculated.
 
 ```{r}
 reid_variables <- reid_variables %>% 
@@ -174,7 +176,7 @@ reid_variables <- reid_variables %>%
 reid_variables
 ```
 
-Again with mutate(), the index can be reformatted as a scale of 1-5 as in Reid and colleagues original work.
+Again with `mutate()`, the index can be reformatted as a scale of 1-5 as in Reid and colleagues original work.
 
 ```{r}
 reid_variables <- reid_variables %>%
@@ -190,9 +192,9 @@ reid_variables <- reid_variables %>%
 reid_variables
 ```
 
-Although some methodology was assumed, these values appear to match Reid and colleagues', highlighting how Humdrum could aid in reproducibility.
+Although some methodology was assumed, these values appear to match Reid and colleagues', highlighting how `humdrum` could aid in reproducibility.
 
-AvoNet's interspecies tibbles (i.e. birdlife, ebird, birdtree) provide the means of species for AvoNet's functional traits including those only available at species level such as geographic information (and mass as it was extracted from literature). This means that no intraspecies variation is included in this data, unlike the raw_data tibble. Furthermore, the interspecies tibbles record observations as sex general meaning any sex specific information and variation is lost. Humdrum's avonet_extract_intraspecies() function enables extraction of traits (and other variables) from the raw_data tibble of AvoNet. Furthermore, it applies the specified taxonomy classification system to the data. This enables exploration and use of what intraspecies variation is available in AvoNet including in analysis between higher taxonomic levels.
+AvoNet's interspecies tibbles (i.e. `birdlife`, `ebird`, `birdtree`) provide the means of species for AvoNet's functional traits including those only available at species level such as geographic information (and `mass` as it was extracted from literature). This means that no intraspecies variation is included in this data, unlike the `raw_data` tibble. Additionally, the interspecies tibbles record observations as sex general meaning any sex specific information and variation is lost. `humdrum`'s `avonet_extract_intraspecies()` function enables extraction of traits (and other variables) from the `raw_data` tibble of AvoNet. Furthermore, it applies the specified taxonomy classification system to the data. This enables exploration and use of what intraspecies variation is available in AvoNet including in analysis between sexes and higher taxonomic levels.
 
 ```{r}
 intraspecies <- avonet_extract_intraspecies(filename = "raw_data/avonet_dataset.xlsx",
@@ -202,23 +204,23 @@ intraspecies <- avonet_extract_intraspecies(filename = "raw_data/avonet_dataset.
 intraspecies
 ```
 
-Using Humdrum's avonet_summary() function (which can also be applied to data extracted using avonet_extract_interspecies()), we can apply summary statistics to this extracted data.
+Using `humdrum`'s `avonet_summary()` function (which can also be applied to the output of `avonet_extract_interspecies()`), we can apply summary statistics to this extracted data.
 
 ```{r}
 intraspecies_summary <- avonet_summary(data = intraspecies, group = c("species", "sex"), stats = c("mean", "median", "sd"), tidy = FALSE)
 intraspecies_summary
 ```
 
-This function defaults to a non-tidy format as it is easier to explore visually. For analysis, the tidy argument can be set to TRUE.
+This function defaults to a non-tidy format as it is easier to explore visually. For analysis, the `tidy` argument can be set to `TRUE`.
 
 ```{r}
 intraspecies_summary <- avonet_summary(data = intraspecies, group = c("species", "sex"), stats = c("mean", "median", "sd"), tidy = TRUE)
 intraspecies_summary
 ```
 
-Using the means of wing.length and secondary1, we can almost repeat the calculation for wing loading index on sex specific data. Unfortunately, AvoNet only includes body mass data at a species, sex general level. Therefore, an outside mass source would be needed.
+Using the means of `wing.length` and `secondary1`, we can almost repeat the calculation for wing loading index on sex specific data. Unfortunately, AvoNet only includes body mass data at a species, sex general level. Therefore, an outside mass source would be needed.
 
-It is important to note that AvoNet includes a very limited number of individuals per species as it focuses on broad species coverage. Therefore, AvoNet is limited in answering particular research questions. However, it is perfectly built for exploration. Using Humdrum to interface with AvoNet, researchers can easily navigate and explore while making their work reproducible. Humdrum takes care of the bulk of the data retrieval and manipulation. Thus, used in conjunction with visualisation packages like ggplot, it could be a powerful tool for reproducible EDA. Furthermore, as AvoNet expands and updates, Humdrum and AvoNet could become additionally useful for answering particular research questions.
+It is important to note that AvoNet includes a very limited number of individuals per species as it focuses on broad species coverage. Therefore, AvoNet is limited in answering particular research questions. However, it is perfectly built for exploration. Using `humdrum` to interface with AvoNet, researchers can easily navigate and explore while making their work reproducible. `humdrum` takes care of the bulk of the data retrieval and manipulation. Thus, used in conjunction with visualisation packages like `ggplot2`, it could be a powerful tool for reproducible EDA. Furthermore, as AvoNet expands and updates, `humdrum` and AvoNet could become additionally useful for answering particular research questions.
 
 # References
 

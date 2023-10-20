@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# <img src="https://github.com/DruryCF/DS4B-final-project/assets/141908184/817df146-5e8c-4057-abd1-84fb62d81808" height="100">humdrum
+# <img src="https://github.com/DruryCF/DS4B-final-project/assets/141908184/d04221e8-86a6-42c5-80e2-5af39c084242" height="100">humdrum
 
 <!-- badges: start -->
 <!-- badges: end -->

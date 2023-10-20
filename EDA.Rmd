@@ -677,11 +677,13 @@ p <- ggplot(summary_plot_family, mapping = aes(genus, tail.length)) +
   geom_boxplot(fill = "#90BF96") +
   xlab("genus") +
   ylab("tail length (mm)") +
-  labs(title = "Tail Length variation of males in genera of the Acanthizidae family") +
+  labs(title = "Tail Length Variation of Males in \nGenera of the Acanthizidae Family") +
   theme(panel.background = element_rect(fill = "#D5E7D7"),
-        plot.background = element_rect(fill = "#D5E7D7", colour = "#09806F", linewidth = 3),
-        plot.title = element_text(colour = "#094595"),
-        axis.title = element_text(colour = "#094595"),
+        plot.background = element_rect(fill = "#D5E7D7"),
+        plot.title = element_text(colour = "#094595", size = 30),
+        axis.title = element_text(colour = "#094595", size = 20),
+        axis.text.y = element_text(size = 15),
+        axis.text.x = element_text(size = 15),
         text = (element_text(family = "serif")))
 
 p

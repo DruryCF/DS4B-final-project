@@ -661,3 +661,29 @@ summary3
 summary4
 ```
 
+
+```{r}
+summary_plot <- avonet_summary(data = filter(extract, sex == "M"), group = c("family", "genus", "species", "sex"), stats = c("mean"), tidy = TRUE)
+summary_plot
+```
+
+# Plot example; designed for poster
+
+```{r}
+summary_plot_family <- summary_plot %>% 
+  filter(family == "Acanthizidae", genus %in% c("Acanthiza", "Aphelocephala", "Calamanthus", "Crateroscelis", "Gerygone", "Sericornis"))
+
+p <- ggplot(summary_plot_family, mapping = aes(genus, tail.length)) + 
+  geom_boxplot(fill = "#90BF96") +
+  xlab("genus") +
+  ylab("tail length (mm)") +
+  labs(title = "Tail Length variation of males in genera of the Acanthizidae family") +
+  theme(panel.background = element_rect(fill = "#D5E7D7"),
+        plot.background = element_rect(fill = "#D5E7D7", colour = "#09806F", linewidth = 3),
+        plot.title = element_text(colour = "#094595"),
+        axis.title = element_text(colour = "#094595"),
+        text = (element_text(family = "serif")))
+
+p
+```
+
